@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import 'semantic-ui-css/semantic.min.css'
+import { Button } from 'semantic-ui-react'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    user: 1,
+    photos: [],
+    selected: null,
+    filters: []
+  }
+
+  componentDidMount() {
+    fetch("http://localhost:3000/photos")
+      .then(r => r.json())
+      .then(data => this.setState({photos: data}))
+  }
+
+
+  render() {
+    return (
+      App
+    );
+  }
 }
 
 export default App;
