@@ -1,7 +1,8 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css'
-import { Button } from 'semantic-ui-react'
+import IndexContainer from './containers/IndexContainer'
+import ShowContainer from './containers/ShowContainer'
 
 class App extends Component {
   state = {
@@ -17,10 +18,27 @@ class App extends Component {
       .then(data => this.setState({photos: data}))
   }
 
+  filterSort = () => {
+    let {user, photos, filters} = this.state
+    let filtered = photos
+    filtered = filtered.filter(photo => photo.user_id === user)
+  }
 
   render() {
+    let {selected} = this.state
     return (
-      App
+      <Fragment>
+        <Header />
+        {selected ? (
+          <ShowContainer 
+            photo={selected}
+          /> 
+        ) : (
+          <IndexContainer 
+            photos={this.filterSort()}
+          />
+        )}
+      </Fragment>
     );
   }
 }

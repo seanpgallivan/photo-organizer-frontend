@@ -3,7 +3,7 @@ import React from 'react'
 const AlbumDetails = (props) => {
     
     return (
-        AlbumDetails
+        "AlbumDetails"
     )
 }
 
