@@ -1,10 +1,19 @@
-import React from 'react'
+import React from "react";
 
-const ThumbsContainer = (props) => {
-    
-    return (
-        ThumbsContainer
-    )
+const ThumbsContainer = props => {
+     const { thumbs } = props
+
+     const displayThumbs = (thumbs) => {
+         return thumbs.map(thumb => {
+             return <Thumb thumb={thumbs.filename} key={thumbs.id}/>
+         }
+         )
+     }
+     return (
+        <div>
+         {displayThumbs()}
+        </div>
+     )
 }
 
-export default ThumbsContainer
+export default ThumbsContainer;
