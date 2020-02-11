@@ -1,14 +1,15 @@
 import React from "react";
+import Thumb from '../components/Thumb'
 
-const ThumbsContainer = props => {
-     const { thumbs } = props
+const ThumbsContainer = ({thumbs}) => {
 
-     const displayThumbs = (thumbs) => {
-         return thumbs.map(thumb => {
-             return <Thumb thumb={thumbs.filename} key={thumbs.id}/>
-         }
-         )
+     const displayThumbs = () => {
+        console.log(thumbs)
+        return thumbs.map(thumb => {
+            return <Thumb thumb={thumb.filename} key={thumb.id}/>
+        })
      }
+
      return (
         <div>
          {displayThumbs()}

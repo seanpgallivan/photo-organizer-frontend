@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css'
+import Header from './components/Header'
 import IndexContainer from './containers/IndexContainer'
 import ShowContainer from './containers/ShowContainer'
 
@@ -13,15 +14,18 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3000/photos")
+    fetch("http://localhost:4000/photos")
       .then(r => r.json())
       .then(data => this.setState({photos: data}))
   }
 
   filterSort = () => {
     let {user, photos, filters} = this.state
+    console.log(photos)
     let filtered = photos
-    filtered = filtered.filter(photo => photo.user_id === user)
+    filtered = filtered.filter(photo => photo.user.id === user)
+    console.log("filtered", filtered)
+    return filtered
   }
 
   render() {
