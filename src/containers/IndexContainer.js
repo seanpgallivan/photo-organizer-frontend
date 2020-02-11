@@ -1,15 +1,17 @@
 import React, {Fragment} from 'react'
-import Filter from '../components/Filter'
-import AlbumDetails from '../components/AlbumDetails'
+import IndexSidebar from './IndexSidebar'
 import ThumbsContainer from './ThumbsContainer'
 
-const IndexContainer = ({photos}) => {
+const IndexContainer = (props) => {
     
     return (
         <Fragment>
-            <Filter />
-            <AlbumDetails />
-            <ThumbsContainer thumbs={photos}/>
+            <IndexSidebar 
+                {...props}
+            />
+            <ThumbsContainer 
+                photos={props.photos}
+            />
         </Fragment>
     )
 }

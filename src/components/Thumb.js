@@ -1,23 +1,13 @@
 import React from 'react'
-import { Card, Icon, Image } from 'semantic-ui-react'
+import { Card, Image } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
-const Thumb = ({thumb}) => (
+const Thumb = ({photo}) => (
+  <Link to={`/image/${photo.id}`}>
     <Card>
-    <Image src={thumb} wrapped ui={false} />
-    <Card.Content>
-      <Card.Header></Card.Header>
-      <Card.Meta>
-        <span className='date'></span>
-      </Card.Meta>
-      <Card.Description>
-      </Card.Description>
-    </Card.Content>
-    <Card.Content extra>
-      <a>
-        <Icon name='user' />
-      </a>
-    </Card.Content>
-  </Card>
-  )
+      <Image src={photo.filename}/>
+    </Card>
+  </Link>
+)
   
-  export default Thumb
+export default Thumb

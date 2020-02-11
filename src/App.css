@@ -16,3 +16,34 @@
 .App-link {
   color: #61dafb;
 }
+
+.header {
+  background: cyan;
+  margin: 0px;
+  width: 100%;
+  height: 60px;
+  position: sticky;
+  top: 0px;
+  z-index: 999;
+}
+
+.sideitem {
+  margin: 10px;
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+  top: 70px;
+  height: 400px;
+}
+
+.sidebox {
+  background: chartreuse;
+  margin: 0px;
+  width: 400px;
+  height: calc(100vh - 60px);
+  left: 0px;
+  top: 60px;
+  float: left;
+  overflow-y: auto;
+  position: sticky;
+}

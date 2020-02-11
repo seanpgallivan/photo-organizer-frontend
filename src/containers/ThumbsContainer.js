@@ -1,20 +1,20 @@
 import React from "react";
 import Thumb from '../components/Thumb'
+import { Card } from 'semantic-ui-react'
 
-const ThumbsContainer = ({thumbs}) => {
+const ThumbsContainer = ({photos}) => {
 
      const displayThumbs = () => {
-        console.log(thumbs)
-        return thumbs.map(thumb => {
-            return <Thumb thumb={thumb.filename} key={thumb.id}/>
+        return photos.map(photo => {
+            return <Thumb photo={photo} key={photo.id}/>
         })
-     }
+    }
 
-     return (
-        <div>
-         {displayThumbs()}
-        </div>
-     )
+    return (
+        <Card.Group itemsPerRow={10}>
+            {displayThumbs()}
+        </Card.Group>
+    )
 }
 
 export default ThumbsContainer;

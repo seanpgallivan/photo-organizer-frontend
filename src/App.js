@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react';
-import './App.css';
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import 'semantic-ui-css/semantic.min.css'
+import './App.css';
 import Header from './components/Header'
 import IndexContainer from './containers/IndexContainer'
 import ShowContainer from './containers/ShowContainer'
@@ -10,7 +11,9 @@ class App extends Component {
     user: 1,
     photos: [],
     selected: null,
-    filters: []
+    filterAlbum: null,
+    filterTag: null,
+    filterPerson: null
   }
 
   componentDidMount() {
@@ -21,28 +24,40 @@ class App extends Component {
 
   filterSort = () => {
     let {user, photos, filters} = this.state
-    console.log(photos)
     let filtered = photos
     filtered = filtered.filter(photo => photo.user.id === user)
-    console.log("filtered", filtered)
     return filtered
   }
 
+  filterChange = (type, value) => {
+    this.setState({[type]: value})
+  }
+
+
   render() {
-    let {selected} = this.state
+    let {photos, filterAlbum, filterTag, filterPerson} = this.state
     return (
-      <Fragment>
-        <Header />
-        {selected ? (
-          <ShowContainer 
-            photo={selected}
-          /> 
-        ) : (
-          <IndexContainer 
-            photos={this.filterSort()}
+      <Router>
+        <Fragment>
+          <Header />
+          <Route path="/" exact
+            render={() => 
+              <IndexContainer 
+                photos={this.filterSort()} 
+                filterAlbum={filterAlbum}
+                filterTag={filterTag}
+                filterPerson={filterPerson}
+                onFilterChange={this.filterChange}
+              />}
           />
-        )}
-      </Fragment>
+          <Route path="/image/:id" 
+            render={() => 
+              <ShowContainer 
+                photos={photos} 
+              />}
+          />
+        </Fragment>
+      </Router>
     );
   }
 }
