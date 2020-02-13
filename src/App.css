@@ -76,6 +76,14 @@ img {
 /* Semantic over-write */
 .ui.card {
   margin: 10px!important;
+  width: 200px;
+  height: 200px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.ui.ten.cards {
+  margin: 0px;
 }
 .field {
   margin-top: 10px!important;

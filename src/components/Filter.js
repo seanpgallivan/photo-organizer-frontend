@@ -16,11 +16,11 @@ const Filter = ({filters, filterOptions, onFilterChange}) => {
                     <Label pointing='left'>Filter by Album</Label>
                 </Form.Field>
                 <Form.Field inline>
-                    <Select name='tag' value={filters.tag} options={filterOptions.tags} onChange={handleFilterChange}/>
+                    <Select name='tag' value={filters.tag ? filters.tag : null} options={filterOptions.tags} onChange={handleFilterChange}/>
                     <Label pointing='left'>Filter by Tag</Label>
                 </Form.Field>
                 <Form.Field inline>
-                    <Select name='person' value={filters.person} options={filterOptions.people} onChange={handleFilterChange}/>
+                    <Select name='person' value={filters.person ? filters.person : null} options={filterOptions.people} onChange={handleFilterChange}/>
                     <Label pointing='left'>Filter by Person</Label>
                 </Form.Field>
                 <Form.Field inline>

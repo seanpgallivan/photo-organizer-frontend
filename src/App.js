@@ -77,8 +77,8 @@ class App extends Component {
       photo.tags.forEach(tag => tagsOptions.includes(tag) ? null : tagsOptions.push(tag))
       photo.people.forEach(person => peopleOptions.includes(person) ? null : peopleOptions.push(person))
     })
-    tagsOptions = [{key: 0, value: 0, text: "...none..."}].concat(tagsOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
-    peopleOptions = [{key: 0, value: 0, text: "...none..."}].concat(peopleOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))  
+    tagsOptions = [{key: 0, value: 0, text: "< none >"}].concat(tagsOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
+    peopleOptions = [{key: 0, value: 0, text: "< none >"}].concat(peopleOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))  
     this.setState(prev => ({
       filterOptions: {
         ...prev.filterOptions,
@@ -90,7 +90,7 @@ class App extends Component {
 
   buildAlbumState = () => this.getAlbums().then(data => {
     let albums = data.filter(album => album.user_id === this.state.user.id)
-    let albumsOptions = [{key: 0, value: 0, text: "...none..."}].concat(albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})))
+    let albumsOptions = [{key: 0, value: 0, text: "< none >"}].concat(albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})))
     this.setState(prev => ({
       albums: albums, 
       filterOptions: {
@@ -143,7 +143,7 @@ class App extends Component {
     this.setState({edit: {}})
     this.filterClear()
     if (action === "confirm" && album.id) {
-      this.patchAlbum({...album, user_id: this.state.user})
+      this.patchAlbum(album)
         .then(() => this.buildState())
     } else if (action === "confirm") {
       this.postAlbum({...album, user_id: this.state.user.id})
