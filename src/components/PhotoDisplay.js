@@ -1,9 +1,18 @@
 import React from 'react'
 
-const PhotoDisplay = (props) => {
+const PhotoDisplay = ({photo}) => {
     
     return (
-        "PhotoDisplay"
+        <>
+            <div className="pane">
+                <div className="paneitem">
+                    <img 
+                        src={photo.filename} 
+                        alt={photo.description} 
+                    />
+                </div>
+            </div>
+        </>
     )
 }
 

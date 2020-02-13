@@ -1,16 +1,36 @@
 import React, {Fragment} from 'react'
-import IndexSidebar from './IndexSidebar'
+import Filter from '../components/Filter'
+import AlbumDetails from '../components/AlbumDetails'
+import AlbumForm from '../components/AlbumForm'
 import ThumbsContainer from './ThumbsContainer'
 
-const IndexContainer = (props) => {
+const IndexContainer = ({photos, filters, filterOptions, edit, onFilterChange, onFilterClear, onAlbumFormClick, onAlbumDetailsClick}) => {
     
+
     return (
         <Fragment>
-            <IndexSidebar 
-                {...props}
-            />
+            <div className="sidebox">
+                <Filter 
+                    filters={filters}
+                    filterOptions={filterOptions}
+                    onFilterChange={onFilterChange}
+                    onFilterClear={onFilterClear}
+                />
+                {edit.album ? (
+                    <AlbumForm 
+                        album={edit.album}
+                        onAlbumFormClick={onAlbumFormClick}
+                    />
+                ) : (
+                    <AlbumDetails 
+                        album={filters.album}
+                        onAlbumDetailsClick={onAlbumDetailsClick}
+                    />  
+                )}
+                
+            </div>
             <ThumbsContainer 
-                photos={props.photos}
+                photos={photos}
             />
         </Fragment>
     )

@@ -11,9 +11,13 @@ const ThumbsContainer = ({photos}) => {
     }
 
     return (
-        <Card.Group itemsPerRow={10}>
-            {displayThumbs()}
-        </Card.Group>
+        <div className="pane">
+            <div className="paneitem">
+                <Card.Group itemsPerRow={10}>
+                    {displayThumbs()}
+                </Card.Group>
+            </div>
+        </div>
     )
 }
 

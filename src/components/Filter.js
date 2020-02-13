@@ -1,28 +1,32 @@
 import React from 'react'
-import {Select} from 'semantic-ui-react'
-import { objectPattern } from '@babel/types'
+import {Form, Select, Label, Button} from 'semantic-ui-react'
 
-const Filter = ({photos, onFilterChange}) => {
+const Filter = ({filters, filterOptions, onFilterChange}) => {
 
-    let albumOptions = [], tagOptions = [], peopleOptions = []
-    photos.forEach(photo => {
-        photo.albums.forEach(album => albumOptions.includes(album.name) ? null : albumOptions.push(album.name))
-        photo.tags.forEach(tag => tagOptions.includes(tag) ? null : tagOptions.push(tag))
-        photo.people.forEach(person => peopleOptions.includes(person) ? null : peopleOptions.push(person))
-    })
-    albumOptions = [{key: 0, value: 0, text: "Select an Album"}].concat(albumOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
-    tagOptions = [{key: 0, value: 0, text: "Select a Tag"}].concat(tagOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
-    peopleOptions = [{key: 0, value: 0, text: "Select a Person"}].concat(peopleOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
-    
-    const handleChange = (_e, data) => {
-        onFilterChange(data.name, data.value)
+    const handleFilterChange = (_e, target) =>{
+        let filter = target.name === "clear" ? {album: null, tag: null, person: null} : {[target.name]: target.value}
+        onFilterChange(filter)
     }
 
     return (
         <div className="sideitem">
-            <Select name='filterAlbum' placeholder='Select an Album' options={albumOptions} onChange={handleChange}/>
-            <Select name='filterTag' placeholder='Select a Tag' options={tagOptions} onChange={handleChange}/>
-            <Select name='filterPerson' placeholder='Select a Person' options={peopleOptions} onChange={handleChange}/>
+            <Form>
+                <Form.Field inline>
+                    <Select name='album' value={filters.album ? filters.album.name : null} options={filterOptions.albums} onChange={handleFilterChange}/>
+                    <Label pointing='left'>Filter by Album</Label>
+                </Form.Field>
+                <Form.Field inline>
+                    <Select name='tag' value={filters.tag} options={filterOptions.tags} onChange={handleFilterChange}/>
+                    <Label pointing='left'>Filter by Tag</Label>
+                </Form.Field>
+                <Form.Field inline>
+                    <Select name='person' value={filters.person} options={filterOptions.people} onChange={handleFilterChange}/>
+                    <Label pointing='left'>Filter by Person</Label>
+                </Form.Field>
+                <Form.Field inline>
+                    <Button name="clear" color="blue" onClick={handleFilterChange}>Clear All Filters</Button>
+                </Form.Field>
+            </Form>
         </div>
     )
 }

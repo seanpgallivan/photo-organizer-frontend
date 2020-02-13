@@ -3,7 +3,7 @@ import { Card, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 
 const Thumb = ({photo}) => (
-  <Link to={`/image/${photo.id}`}>
+  <Link to={`/photo/${photo.id}`}>
     <Card>
       <Image src={photo.filename}/>
     </Card>

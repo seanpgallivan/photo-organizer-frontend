@@ -28,22 +28,54 @@
 }
 
 .sideitem {
+  background: lightgrey;
   margin: 10px;
   padding: 20px;
   border: 1px solid black;
   border-radius: 10px;
-  top: 70px;
-  height: 400px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
 }
 
 .sidebox {
-  background: chartreuse;
   margin: 0px;
   width: 400px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 80px);
   left: 0px;
   top: 60px;
-  float: left;
   overflow-y: auto;
-  position: sticky;
+  position: fixed;
+}
+
+.pane {
+  background: lightgrey;
+  width: calc(100vw - 430px);
+  height: calc(100vh - 80px);
+  left: 410px;
+  top: 70px;
+  border: 1px solid black;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.4);
+  position: fixed;
+}
+.paneitem {
+  margin: 20px;
+  height: calc(100vh - 120px);
+  width: calc(100vw - 470px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+img {
+  max-height: calc(100vh - 124px);
+  max-width: calc(100vw - 474px);
+}
+
+/* Semantic over-write */
+.ui.card {
+  margin: 10px!important;
+}
+.field {
+  margin-top: 10px!important;
+}
+.ui.button {
+  margin-right: 10px;
 }
