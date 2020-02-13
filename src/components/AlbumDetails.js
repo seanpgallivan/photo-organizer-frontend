@@ -1,10 +1,10 @@
-import React, {Component} from 'react'
-import {Form, Label, Input, Button} from 'semantic-ui-react'
+import React from 'react'
+import {Form, Button} from 'semantic-ui-react'
 
 const AlbumDetails = ({album, onAlbumDetailsClick}) => {
 
     const handleClick = (_e, target) => {
-
+        onAlbumDetailsClick(album, target.name)
     }
         
     return (
@@ -24,9 +24,9 @@ const AlbumDetails = ({album, onAlbumDetailsClick}) => {
                     <p>No Album Selected...</p>
                 </>
             )}
-                    <Form.Field>
-                        <Button name="new" color="blue" onClick={handleClick}>Create a New Album</Button>
-                    </Form.Field>
+            <Form.Field>
+                <Button name="new" color="blue" onClick={handleClick}>Create a New Album</Button>
+            </Form.Field>
         </div>
     )
 }

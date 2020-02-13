@@ -10,7 +10,7 @@ const Header = ({activeItem, onMenuSelect}) => {
 
     return (
         <Menu>
-            <Menu.Item><Image size='mini' src='Photo organizer.png' /></Menu.Item>
+            <Menu.Item><Image src='Photo organizer.png' /></Menu.Item>
             <Menu.Item as={NavLink} exact to='/'>Home</Menu.Item>
             <Menu.Item as={NavLink} exact to='/photos/'>Photos</Menu.Item>
             <Menu.Item position="right" as={NavLink} exact to='/signup/'>Sign up</Menu.Item>

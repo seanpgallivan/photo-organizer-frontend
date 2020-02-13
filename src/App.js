@@ -11,7 +11,9 @@ import ShowContainer from './containers/ShowContainer'
 
 class App extends Component {
   state = {
-    user: 1,
+    user: {
+      id: 1
+    },
     photos: [],
     albums: [],
     filters: {
@@ -24,48 +26,82 @@ class App extends Component {
       tags: [],
       people: []
     },
-    edit: {
-      album: null,
-      photo: null
-    }
+    edit: {}
   }
 
+
+  // Lifecycle Functions:
   componentDidMount() {
+    this.buildState()
+  }
+
+
+  // Fetches:
+  getPhotos = () =>
     fetch("http://localhost:4000/photos")
       .then(r => r.json())
-      .then(data => this.setState(this.buildState(data)))
+  getAlbums = () =>
+    fetch("http://localhost:4000/albums")
+      .then(r => r.json())
+  postAlbum = album => 
+    fetch("http://localhost:4000/albums", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(album)
+    }).then(r => r.json())
+  patchAlbum = album => 
+    fetch(`http://localhost:4000/albums/${album.id}`, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(album)
+    }).then(r => r.json())
+  deleteAlbum = id => 
+    fetch(`http://localhost:4000/albums/${id}`, {
+      method: "DELETE",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"}
+    }).then(r => r.json())
+  
+
+  // Builder Functions:
+  buildState = () => {
+    this.buildPhotoState()
+    this.buildAlbumState()
   }
 
-  buildState = data => {
-    let photos = data.filter(photo => photo.user.id === this.state.user),
-        albums = [], 
-        tagsOptions = [], 
-        peopleOptions = [],
-        albumsOptions = []
+  buildPhotoState = () => this.getPhotos().then(data => {
+    let photos = data.filter(photo => photo.user_id === this.state.user.id)
+    this.setState({photos: photos})
+    let tagsOptions = [], 
+        peopleOptions = []
     photos.forEach(photo => {
-      photo.albums.forEach(album => {
-        if (!albumsOptions.includes(album.name)) {
-          albumsOptions.push(album.name)
-          albums.push(album)
-        }
-      })
       photo.tags.forEach(tag => tagsOptions.includes(tag) ? null : tagsOptions.push(tag))
       photo.people.forEach(person => peopleOptions.includes(person) ? null : peopleOptions.push(person))
     })
-    albumsOptions = [{key: 0, value: 0, text: "...none..."}].concat(albumsOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
     tagsOptions = [{key: 0, value: 0, text: "...none..."}].concat(tagsOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))
     peopleOptions = [{key: 0, value: 0, text: "...none..."}].concat(peopleOptions.sort().map(opt => ({key: opt, value: opt, text: opt})))  
-    return {
-      photos: photos, 
-      albums: albums,
+    this.setState(prev => ({
       filterOptions: {
-        albums: albumsOptions,
+        ...prev.filterOptions,
         tags: tagsOptions,
         people: peopleOptions
       }
-    }
-  }
+    }))
+  })
 
+  buildAlbumState = () => this.getAlbums().then(data => {
+    let albums = data.filter(album => album.user_id === this.state.user.id)
+    let albumsOptions = [{key: 0, value: 0, text: "...none..."}].concat(albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})))
+    this.setState(prev => ({
+      albums: albums, 
+      filterOptions: {
+        ...prev.filterOptions, 
+        albums: albumsOptions
+      }
+    }))
+  })
+
+
+  // Helper Functions
   filterSort = () => {
     let {photos, filters} = this.state
     if (filters.tag) photos = photos.filter(photo => photo.tags.includes(filters.tag))
@@ -74,22 +110,49 @@ class App extends Component {
     return photos
   }
 
+
+  // Callbacks:
   filterChange = filter => {
-    if (filter.album) filter = {album: this.state.albums.find(album => album.name === filter.album)}
-    console.log(filter)
-    this.setState(prev => ({
-      filters: {...prev.filters, ...filter}
-  }))}
+    if (!filter) {
+      this.filterClear()
+    } else {
+      if (filter.album) filter = {album: this.state.albums.find(album => album.name === filter.album)}
+      this.setState(prev => ({
+        filters: {...prev.filters, ...filter}
+  }))}}
 
+  filterClear = () => this.setState({
+    filters: {
+      album: null,
+      tag: null,
+      person: null
+    }
+  })
 
-  albumDetailsClick = e => {
-
+  albumDetailsClick = (album, action) => {
+    if (action === "delete") {
+      this.filterClear()
+      this.deleteAlbum(album.id)
+        .then(() => this.buildState())
+    }
+    if (action === "new") this.setState({edit: {album: {}}})
+    if (action === "edit") this.setState({edit: {album: album}})
   }
 
-  albumFormClick = album => {
-
+  albumFormClick = (album, action) => {
+    this.setState({edit: {}})
+    this.filterClear()
+    if (action === "confirm" && album.id) {
+      this.patchAlbum({...album, user_id: this.state.user})
+        .then(() => this.buildState())
+    } else if (action === "confirm") {
+      this.postAlbum({...album, user_id: this.state.user.id})
+        .then(() => this.buildAlbumState())
+    }
   }
 
+
+  // Render:
   render() {
     let {photos, filters, filterOptions, edit} = this.state
     return (

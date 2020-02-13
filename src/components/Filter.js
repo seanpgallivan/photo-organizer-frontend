@@ -4,7 +4,7 @@ import {Form, Select, Label, Button} from 'semantic-ui-react'
 const Filter = ({filters, filterOptions, onFilterChange}) => {
 
     const handleFilterChange = (_e, target) =>{
-        let filter = target.name === "clear" ? {album: null, tag: null, person: null} : {[target.name]: target.value}
+        let filter = target.name === "clear" ? null : {[target.name]: target.value}
         onFilterChange(filter)
     }
 
