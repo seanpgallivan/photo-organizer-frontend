@@ -1,4 +1,7 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
+import {Button} from 'semantic-ui-react'
+
 const PhotoDetails = ({ photo }) => {
     return (
         // PhotoDetails
@@ -9,6 +12,7 @@ const PhotoDetails = ({ photo }) => {
             <p>People: {photo.people}</p>
             <p>Location: {photo.location}</p>
             <p>Size: {photo.size}</p>
+            <Button color="teal" as={Link} exact to='/photos'>Back</Button>
         </div>
     )
 }

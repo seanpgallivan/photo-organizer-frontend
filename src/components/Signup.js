@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Form, Button, Grid, Header, Message, Segment } from 'semantic-ui-react';
+import { Form, Button, Grid, Header } from 'semantic-ui-react';
 import {Link, Redirect} from 'react-router-dom'
 
 class Signup extends Component {
@@ -28,7 +28,7 @@ class Signup extends Component {
             <Header as='h1' inverted textAlign='center'>
               Please create your account 
             </Header>
-            <Form size='large'>
+            <Form size='large' autoComplete="off">
               <Form.Input 
                 fluid 
                 icon='user circle' 

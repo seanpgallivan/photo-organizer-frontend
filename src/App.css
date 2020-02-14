@@ -18,7 +18,8 @@
 }
 
 body {
-  background: lightgray;
+  background: #c4d8cc;
+  color: black
 }
 
 .sideitem {
@@ -57,6 +58,9 @@ body {
   width: calc(100vw - 470px);
   overflow-y: auto;
   overflow-x: hidden;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 img {
   max-height: calc(100vh - 124px);
@@ -71,6 +75,9 @@ img {
   height: 100vh;
   width: 100vw;
 }
+a {
+  color: #208cf7;
+}
 
 
 /* Semantic over-write */
@@ -82,15 +89,36 @@ img {
   background-repeat: no-repeat;
   background-position: center;
 }
-.column.homeimage {
+.homeimage {
   background-image: url("/Photo organizer large.png");
-  width: 1000px;
-  height: 250px;
-
+  width: 800px;
+  height: 200px;
+  margin: 0px;
+  border-radius: 20px;
+}
+.column.homecontent {
+  height: 70vh;
+  padding: 0px!important;
+  background: rgba(0,0,0,0);
+}
+.homebuttonbox {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  height: 100px;
+  width: 430px;
+  text-align: center;
+  margin: auto;
+}
+.homespacer {
+  height: calc(70vh - 300px);
+}
+.ui.huge.button {
+  width: 150px;
+  margin: 24px;
 }
 .grid.homebox {
   margin: auto;
-  width: 1000px;
+  width: 800px;
   height: 100vh;
 }
 .ui.ten.cards {
@@ -105,10 +133,16 @@ img {
 .item {
   padding: 0px 15px!important;
 }
+.nopad {
+  padding: 0px!important;
+}
 .ui.menu {
-  background: #487158!important;
+  background: rgba(0,0,0,0.2)!important;
   position: sticky;
   z-index: 9;
+}
+.ui.menu.loggedin {
+  background: #487158!important;
 }
 .column {
   background: rgba(0,0,0,0.3);

@@ -42,7 +42,7 @@ class AlbumForm extends Component {
                     </Form.Field>
                 </Form>
                 <Form.Field>
-                    <Button name="confirm" color="blue" onClick={this.handleClick}>Confirm</Button>
+                    <Button name="confirm" color="teal" onClick={this.handleClick}>Confirm</Button>
                     <Button name="cancel" color="black" onClick={this.handleClick}>Cancel</Button>
                 </Form.Field>
             </div>

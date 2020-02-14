@@ -24,7 +24,7 @@ const Filter = ({filters, filterOptions, onFilterChange}) => {
                     <Label pointing='left'>Filter by Person</Label>
                 </Form.Field>
                 <Form.Field inline>
-                    <Button name="clear" color="blue" onClick={handleFilterChange}>Clear All Filters</Button>
+                    <Button name="clear" color="teal" onClick={handleFilterChange}>Clear All Filters</Button>
                 </Form.Field>
             </Form>
         </div>

@@ -9,30 +9,48 @@ import Signup from './components/Signup'
 import IndexContainer from './containers/IndexContainer'
 import ShowContainer from './containers/ShowContainer'
 
-class App extends Component {
-  state = {
-    user: null,
-    redirect: false,
-    photos: [],
+const INITIAL_STATE = {
+  user: null,
+  redirect: false,
+  photos: [],
+  albums: [],
+  filters: {
+    album: null,
+    tag: null,
+    person: null
+  },
+  filterOptions: {
     albums: [],
-    filters: {
-      album: null,
-      tag: null,
-      person: null
-    },
-    filterOptions: {
-      albums: [],
-      tags: [],
-      people: []
-    },
-    edit: {}
-  }
+    tags: [],
+    people: []
+  },
+  edit: {}
+}
+
+class App extends Component {
+  state = INITIAL_STATE
 
 
   // Lifecycle Functions:
   componentDidMount() {
-    this.buildState()
+    let localUser = localStorage.getItem('username')
+    if (localUser) this.login(localUser)
   }
+
+
+  // User Management:
+  login = username => 
+    this.getUser(username)
+      .then(this.buildState)
+
+  logout = () => {
+    this.setState(INITIAL_STATE)
+    localStorage.removeItem('username')
+  }
+
+  signup = user =>
+    this.postUser(user)
+      .then(this.buildState)
 
 
   // Fetches:
@@ -45,9 +63,6 @@ class App extends Component {
       headers: {"Content-Type": "application/json", "Accept": "application/json"},
       body: JSON.stringify(user)
     }).then(r => r.json())
-  // getPhotos = () =>
-  //   fetch("http://localhost:4000/photos")
-  //     .then(r => r.json())
   getAlbums = () =>
     fetch("http://localhost:4000/albums")
       .then(r => r.json())
@@ -73,7 +88,6 @@ class App extends Component {
   // Builder Functions:
   buildState = data => {
     if (data) {
-      // this.setState({redirect: true})
       let photos = data.photos,
           albums = [],
           albumsOptions = [],
@@ -110,6 +124,7 @@ class App extends Component {
         },
         edit: {}
       })
+      localStorage.setItem('username', data.username)
     }
   }
 
@@ -166,17 +181,6 @@ class App extends Component {
 
   clearForms = () =>
     this.setState({edit: {}})
-
-  signup = user =>
-    this.postUser(user)
-      .then(this.buildState)
-
-  login = username => 
-    this.getUser(username)
-      .then(this.buildState)
-
-  logout = () => 
-    this.setState({user: null})
 
   redirected = () => 
     this.setState({redirect: false})

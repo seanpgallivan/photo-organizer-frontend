@@ -15,7 +15,7 @@ const AlbumDetails = ({album, onAlbumDetailsClick}) => {
                     <p>Name: {album.name}</p>
                     <p>Description: {album.description}</p>
                     <Form.Field>
-                        <Button name="edit" color="blue" onClick={handleClick}>Edit</Button>
+                        <Button name="edit" color="teal" onClick={handleClick}>Edit</Button>
                         <Button name="delete" color="red" onClick={handleClick}>Delete</Button>
                     </Form.Field>
                 </>
@@ -25,7 +25,7 @@ const AlbumDetails = ({album, onAlbumDetailsClick}) => {
                 </>
             )}
             <Form.Field>
-                <Button name="new" color="blue" onClick={handleClick}>Create a New Album</Button>
+                <Button name="new" color="teal" onClick={handleClick}>Create a New Album</Button>
             </Form.Field>
         </div>
     )

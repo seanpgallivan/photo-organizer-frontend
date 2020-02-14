@@ -1,5 +1,5 @@
 import React from 'react'
-import { Menu, Image } from 'semantic-ui-react'
+import {Menu, Image} from 'semantic-ui-react'
 import {NavLink} from 'react-router-dom'
 
 const Header = ({user, onLogout}) => {
@@ -8,12 +8,15 @@ const Header = ({user, onLogout}) => {
         onLogout()
 
     return (
-        <Menu inverted>
-            <Menu.Item><Image src='/Photo organizer.png' /></Menu.Item>
+        <Menu inverted size="massive" className={user ? "loggedin" : null}>
+            <Menu.Item className="nopad"><Image src='/Photo organizer.png' /></Menu.Item>
             <Menu.Item as={NavLink} exact to='/'>Home</Menu.Item>
-            <Menu.Item as={NavLink} exact to='/photos/'>Photos</Menu.Item>
             {user ? (
-                <Menu.Item position="right" onClick={handleClick}>Logout</Menu.Item>
+                <>
+                    <Menu.Item as={NavLink} exact to='/photos/'>Photos</Menu.Item>
+                    <Menu.Item position="right">Welcome, {user.fullname}!</Menu.Item>
+                    <Menu.Item onClick={handleClick}>Logout</Menu.Item>
+                </>
             ) : (
                 <>
                     <Menu.Item position="right" as={NavLink} exact to='/login'>Login</Menu.Item>
