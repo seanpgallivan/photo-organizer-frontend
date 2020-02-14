@@ -82,6 +82,17 @@ img {
   background-repeat: no-repeat;
   background-position: center;
 }
+.column.homeimage {
+  background-image: url("/Photo organizer large.png");
+  width: 1000px;
+  height: 250px;
+
+}
+.grid.homebox {
+  margin: auto;
+  width: 1000px;
+  height: 100vh;
+}
 .ui.ten.cards {
   margin: 0px;
 }
@@ -94,11 +105,8 @@ img {
 .item {
   padding: 0px 15px!important;
 }
-.ui.menu.item {
-  color: white!important;
-}
 .ui.menu {
-  background: #487158;
+  background: #487158!important;
   position: sticky;
   z-index: 9;
 }

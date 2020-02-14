@@ -1,9 +1,22 @@
-import React from 'react'
+import React, {Component} from 'react'
+import {Grid} from 'semantic-ui-react'
 
-const Home = (props) => (
-    <div className="home">
+class Home extends Component {
 
-    </div>
-)
+    componentDidMount() {
+        this.props.onRedirected()
+    }
+
+    render() {
+        return (
+            <div className="home">
+                <Grid textAlign='center' className="homebox" verticalAlign='middle'>
+                    <Grid.Column className="homeimage">
+                    </Grid.Column>
+                </Grid>
+            </div>
+        )
+    }
+}
   
 export default Home

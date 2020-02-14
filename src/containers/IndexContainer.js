@@ -1,14 +1,16 @@
-import React, {Fragment} from 'react'
+import React from 'react'
+import {Redirect} from 'react-router-dom'
 import Filter from '../components/Filter'
 import AlbumDetails from '../components/AlbumDetails'
 import AlbumForm from '../components/AlbumForm'
 import ThumbsContainer from './ThumbsContainer'
 
-const IndexContainer = ({photos, filters, filterOptions, edit, onFilterChange, onFilterClear, onAlbumFormClick, onAlbumDetailsClick}) => {
+const IndexContainer = ({user, photos, filters, filterOptions, edit, onClearForms, onFilterChange, onFilterClear, onAlbumFormClick, onAlbumDetailsClick}) => {
     
 
     return (
-        <Fragment>
+        <>
+            {!user ? <Redirect to='/login' /> : null}
             <div className="sidebox">
                 <Filter 
                     filters={filters}
@@ -19,6 +21,7 @@ const IndexContainer = ({photos, filters, filterOptions, edit, onFilterChange, o
                 {edit.album ? (
                     <AlbumForm 
                         album={edit.album}
+                        onClearForms={onClearForms}
                         onAlbumFormClick={onAlbumFormClick}
                     />
                 ) : (
@@ -32,7 +35,7 @@ const IndexContainer = ({photos, filters, filterOptions, edit, onFilterChange, o
             <ThumbsContainer 
                 photos={photos}
             />
-        </Fragment>
+        </>
     )
 }
 

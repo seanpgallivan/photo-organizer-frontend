@@ -7,6 +7,10 @@ class AlbumForm extends Component {
         description: this.props.album.description || ""
     }
 
+    componentWillUnmount() {
+        this.props.onClearForms()
+    }
+
     handleFormChange = e => 
         this.setState({[e.target.name]: e.target.value})
 
