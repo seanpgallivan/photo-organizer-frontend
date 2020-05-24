@@ -78,6 +78,55 @@ img {
 a {
   color: #208cf7;
 }
+.photo-details {
+  margin: 3px 0px 0px 15px;
+}
+.button-box {
+  margin: 20px 0px 0px 0px;
+}
+h3 {
+  margin: 20px 0px 5px 0px;
+}
+.btn {
+  border-radius: 8px;
+  padding: 2px 7px;
+  margin: 3px;
+}
+.alb, .ui.left.pointing.label.lbl-alb {
+ color: darkorchid;
+ border-color: darkorchid;
+}
+.alb:hover, .ui.left.pointing.label.lbl-alb-act {
+  color: white;
+  background: darkorchid;
+}
+.tag, .ui.left.pointing.label.lbl-tag {
+  color: #208cf7;
+  border-color: #208cf7;
+}
+.tag:hover, .ui.left.pointing.label.lbl-tag-act {
+  color: white;
+  background: #208cf7;
+}
+.per, .ui.left.pointing.label.lbl-per {
+  color: green;
+  border-color: green;
+}
+.per:hover, .ui.left.pointing.label.lbl-per-act {
+  color: white;
+  background: green;
+}
+.loc, .ui.left.pointing.label.lbl-loc {
+  color: darkorange;
+  border-color: darkorange;
+}
+.loc:hover, .ui.left.pointing.label.lbl-loc-act {
+  color: white;
+  background: darkorange;
+}
+.buff {
+  margin-right: 17px;
+}
 
 
 /* Semantic over-write */

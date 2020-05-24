@@ -5,12 +5,7 @@ const PhotoDisplay = ({photo}) => {
     return (
         <>
             <div className="pane">
-                <div className="paneitem" style={{backgroundImage: `url(${photo.filename})`}}>
-                    {/* <img 
-                        src={photo.filename} 
-                        alt={photo.description} 
-                    /> */}
-                    
+                <div className="paneitem" style={{backgroundImage: `url(${photo.filename})`}}>                    
                 </div>
             </div>
         </>

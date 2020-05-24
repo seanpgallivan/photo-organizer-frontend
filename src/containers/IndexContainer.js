@@ -5,18 +5,17 @@ import AlbumDetails from '../components/AlbumDetails'
 import AlbumForm from '../components/AlbumForm'
 import ThumbsContainer from './ThumbsContainer'
 
-const IndexContainer = ({user, photos, filters, filterOptions, edit, onClearForms, onFilterChange, onFilterClear, onAlbumFormClick, onAlbumDetailsClick}) => {
+const IndexContainer = ({user, photos, filters, filterOptions, edit, onClearForms, onFilterChange, onAlbumFormClick, onAlbumDetailsClick}) => {
     
 
     return (
         <>
-            {!user ? <Redirect to='/login' /> : null}
+            {/* {!user ? <Redirect to='/login' /> : null} */}
             <div className="sidebox">
                 <Filter 
                     filters={filters}
                     filterOptions={filterOptions}
                     onFilterChange={onFilterChange}
-                    onFilterClear={onFilterClear}
                 />
                 {edit.album ? (
                     <AlbumForm 
