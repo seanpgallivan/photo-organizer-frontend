@@ -1,41 +1,37 @@
 import React from 'react'
-import {Redirect} from 'react-router-dom'
 import Filter from '../components/Filter'
 import AlbumDetails from '../components/AlbumDetails'
 import AlbumForm from '../components/AlbumForm'
 import ThumbsContainer from './ThumbsContainer'
 
-const IndexContainer = ({user, photos, filters, filterOptions, edit, onClearForms, onFilterChange, onAlbumFormClick, onAlbumDetailsClick}) => {
-    
-
-    return (
-        <>
-            {/* {!user ? <Redirect to='/login' /> : null} */}
-            <div className="sidebox">
-                <Filter 
-                    filters={filters}
-                    filterOptions={filterOptions}
-                    onFilterChange={onFilterChange}
-                />
-                {edit.album ? (
-                    <AlbumForm 
-                        album={edit.album}
-                        onClearForms={onClearForms}
-                        onAlbumFormClick={onAlbumFormClick}
-                    />
-                ) : (
-                    <AlbumDetails 
-                        album={filters.album}
-                        onAlbumDetailsClick={onAlbumDetailsClick}
-                    />  
-                )}
-                
-            </div>
-            <ThumbsContainer 
-                photos={photos}
-            />
-        </>
-    )
+const IndexContainer = ({photos, album, filters, filterOptions, edit, onClearForms, onFilterChange, onAlbumFormClick, onAlbumDetailsClick}) => {
+  return (
+    <>
+      <div className="sidebox">
+        <Filter 
+          filters={filters}
+          count={photos.length}
+          filterOptions={filterOptions}
+          onFilterChange={onFilterChange}
+        />
+        {edit.album ? (
+          <AlbumForm 
+            album={edit.album}
+            onClearForms={onClearForms}
+            onAlbumFormClick={onAlbumFormClick}
+          />
+        ) : (
+          <AlbumDetails 
+            album={album}
+            onAlbumDetailsClick={onAlbumDetailsClick}
+          />  
+        )} 
+      </div>
+      <ThumbsContainer 
+        photos={photos}
+      />
+    </>
+  )
 }
 
 export default IndexContainer

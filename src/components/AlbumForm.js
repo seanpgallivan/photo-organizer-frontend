@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Label, Input, Button} from 'semantic-ui-react'
+import {Input, Button} from 'semantic-ui-react'
 
 class AlbumForm extends Component {
     state = {
@@ -22,29 +22,19 @@ class AlbumForm extends Component {
         let {name, description} = this.state
         return (
             <div className="sideitem">
-                <Form>
-                    <h2>{album.id ? "Edit" : "New"} Album:</h2>
-                    <Form.Field inline>
-                        <Label>Album Name</Label>
-                        <Input 
-                            name="name" 
-                            value={name} 
-                            onChange={this.handleFormChange}
-                        />
-                    </Form.Field>
-                    <Form.Field inline>
-                        <Label>Album Description</Label>
-                        <Input 
-                            name="description" 
-                            value={description} 
-                            onChange={this.handleFormChange}
-                        />
-                    </Form.Field>
-                </Form>
-                <Form.Field>
+                <h2>{album.id ? "Edit" : "New"} Album:</h2>
+                <div className='lbl-deet'>Name:</div>
+                <div className='details'>
+                    <Input name="name" value={name} onChange={this.handleFormChange} />
+                </div>
+                <div className='lbl-deet'>Description:</div>
+                <div className='details'>
+                    <Input name="description" value={description} onChange={this.handleFormChange} />
+                </div>
+                <div className='button-box'>
                     <Button name="confirm" color="teal" onClick={this.handleClick}>Confirm</Button>
                     <Button name="cancel" color="black" onClick={this.handleClick}>Cancel</Button>
-                </Form.Field>
+                </div>
             </div>
         )
     }

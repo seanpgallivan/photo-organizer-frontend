@@ -1,5 +1,5 @@
 import React from 'react'
-import {Form, Button} from 'semantic-ui-react'
+import {Button} from 'semantic-ui-react'
 
 const AlbumDetails = ({album, onAlbumDetailsClick}) => {
 
@@ -12,21 +12,23 @@ const AlbumDetails = ({album, onAlbumDetailsClick}) => {
             <h2>Album Details:</h2>
             { album ? (
                 <>
-                    <p>Name: {album.name}</p>
-                    <p>Description: {album.description}</p>
-                    <Form.Field>
+                    <div className='lbl-deet'>Name:</div>
+                    <div className='details'>{album.name}</div>
+                    <div className='lbl-deet'>Description:</div>
+                    <div className='details'>{album.description}</div>
+                    <div className='button-box'>
                         <Button name="edit" color="teal" onClick={handleClick}>Edit</Button>
                         <Button name="delete" color="red" onClick={handleClick}>Delete</Button>
-                    </Form.Field>
+                    </div>
                 </>
             ) : (
                 <>
                     <p>No Album Selected...</p>
                 </>
             )}
-            <Form.Field>
+            <div className='button-box'>
                 <Button name="new" color="teal" onClick={handleClick}>Create a New Album</Button>
-            </Form.Field>
+            </div>
         </div>
     )
 }

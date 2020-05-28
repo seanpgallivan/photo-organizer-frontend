@@ -1,5 +1,5 @@
 import React, {Component, Fragment} from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import {BrowserRouter as Router, Route, Redirect} from "react-router-dom";
 import 'semantic-ui-css/semantic.min.css'
 import './App.css';
 import Header from './components/Header'
@@ -11,7 +11,7 @@ import ShowContainer from './containers/ShowContainer'
 
 const INITIAL_STATE = {
   user: null,
-  redirect: false,
+  redirect: '/',
   photos: [],
   albums: [],
   filters: {
@@ -35,29 +35,29 @@ class App extends Component {
 
   // Lifecycle Functions:
   componentDidMount() {
-    this.loadUser()
+    this.login()
   }
 
 
   // User Management:
-  login = username => 
-    this.getUser(username)
-      .then(this.buildState)
+  login = user => {
+    let localUser = localStorage.getItem('username')
+    if (localUser || user) this.setState({user: {username: (user ? user : localUser)}}, this.loadUser)
+  }
 
   logout = () => {
     this.setState(INITIAL_STATE)
     localStorage.removeItem('username')
   }
-
+  
   signup = user =>
     this.postUser(user)
       .then(this.buildState)
-
-  loadUser = () => {
-    let localUser = localStorage.getItem('username')
-    if (localUser) this.login(localUser)
-  }
-
+  
+  loadUser = (redirect='/photos') => 
+    this.getUser(this.state.user.username)
+      .then(data => this.buildState(data, redirect))
+  
 
   // Fetches:
   getUser = username =>
@@ -69,9 +69,6 @@ class App extends Component {
       headers: {"Content-Type": "application/json", "Accept": "application/json"},
       body: JSON.stringify(user)
     }).then(r => r.json())
-  getAlbums = () =>
-    fetch("http://localhost:4000/albums")
-      .then(r => r.json())
   postAlbum = album => 
     fetch("http://localhost:4000/albums", {
       method: "POST",
@@ -89,21 +86,39 @@ class App extends Component {
       method: "DELETE",
       headers: {"Content-Type": "application/json", "Accept": "application/json"}
     }).then(r => r.json())
+  postPhoto = photo =>
+    fetch("http://localhost:4000/photos", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(photo)
+    }).then(r => r.json())
+  patchPhoto = photo =>
+    fetch(`http://localhost:4000/photos/${photo.id}`, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify(photo)
+    }).then(r => r.json())
   deletePhoto = id => 
     fetch(`http://localhost:4000/photos/${id}`, {
       method: "DELETE",
       headers: {"Content-Type": "application/json", "Accept": "application/json"}
     }).then(r => r.json())
+  postAlbumsPhoto = (aid, pid) =>
+    console.log("making an album_photo!")
+  deleteAlbumsPhoto = (aid, pid) =>
+    fetch(`http://localhost:4000/albums_photos/${aid},${pid}`, {
+      method: "DELETE",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"}
+    }).then(r => r.json())
   
 
-  // Builder Function (builds filter options)
-  buildState = data => {
+  // Builder Function
+  buildState = (data, redirect='/photos') => {
     if (data) {
-      let noOpt = [{key: "", value: "", text: "< none >"}],
-          albumsOptions = noOpt.concat(data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name}))).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1),
-          tagsOptions = noOpt.concat(data.tags.map(opt => ({key: opt, value: opt, text: opt}))),
-          peopleOptions = noOpt.concat(data.people.map(opt => ({key: opt, value: opt, text: opt}))),
-          locationsOptions = noOpt.concat(data.locations.map(opt => ({key: opt, value: opt, text: opt})))
+      let albumsOptions = data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1),
+          tagsOptions = data.tags.map(opt => ({key: opt, value: opt, text: opt})),
+          peopleOptions = data.people.map(opt => ({key: opt, value: opt, text: opt})),
+          locationsOptions = data.locations.map(opt => ({key: opt, value: opt, text: opt}))
       this.setState({
         user: {
           id: data.id,
@@ -111,15 +126,9 @@ class App extends Component {
           fullname: data.fullname,
           bio: data.bio
         },
-        redirect: true,
+        redirect: redirect,
         photos: data.photos,
         albums: data.albums,
-        filters: {
-          album: null,
-          tag: null,
-          person: null,
-          location: null
-        },
         filterOptions: {
           albums: albumsOptions,
           tags: tagsOptions,
@@ -143,17 +152,48 @@ class App extends Component {
     return photos
   }
 
+  albumSelected = () => 
+    this.state.albums.find(album => album.name === this.state.filters.album)
+
 
   // Callbacks:
   filterChange = filter => {
     let newFilter = !filter ? {album: null, tag: null, person: null, location: null} : {...this.state.filters, ...filter}
     this.setState({filters: newFilter})
   }
+  
+  clickDetail = (photo, act, type, val) => {
+    console.log(photo.id, act, type, val)
+    if (act === 'filter') 
+      this.setState({
+        filters: {
+          album: null, tag: null, person: null, location: null,
+          [type]: val
+        },
+        redirect: '/photos'})
+    if (act === 'delete') 
+      this.setState({redirect: '/photos'}, 
+        () => this.deletePhoto(photo.id)
+          .then(() => this.loadUser(null)))
+    if (act === 'remove' && type === 'albums')
+      this.deleteAlbumsPhoto(photo.albums.find(al => al.name === val).id, photo.id)
+        .then(() => this.loadUser(null))
+    if (act === 'remove' && type !== 'albums')
+      this.patchPhoto({id: photo.id, [type]: photo[type].filter(el => el !== val)})
+        .then(() => this.loadUser(null))
+    if (act === 'add' && type === 'albums')
+      console.log("todo")
+    if (act === 'add' && type !== 'albums')
+      this.patchPhoto({id: photo.id, [type]: [...photo[type], val]})
+        .then(() => this.loadUser(null))
+    }
 
   albumDetailsClick = (album, action) => {
     if (action === "delete") 
-      this.deleteAlbum(album.id)
-      .then(() => this.loadUser())
+      this.setState(prev => ({filters: {...prev.filters, album: null}}), () =>
+        this.deleteAlbum(album.id)
+          .then(() => this.loadUser())
+      )
     if (action === "new")
       this.setState({edit: {album: {}}})
     if (action === "edit")
@@ -162,35 +202,24 @@ class App extends Component {
 
   albumFormClick = (album, action) => {
     if (action === "confirm" && album.id) {
-      this.patchAlbum(album)
-        .then(() => this.loadUser())
+      this.setState(prev => ({filters: {...prev.filters, album: album.name}}), () =>
+        this.patchAlbum(album)
+          .then(() => this.loadUser())
+      )
     } else if (action === "confirm") {
       this.postAlbum({...album, user_id: this.state.user.id})
         .then(() => this.loadUser())
-  }}
-
-  clickFilter = (type, name, history) => {
-    this.setState({
-      filters: {
-        album: type === "alb" ? name : null,
-        tag: type === "tag" ? name : null,
-        person: type === "per" ? name : null,
-        location: type === "loc" ? name : null
-    }})
-    history.push('/photos')
+    } else {
+      this.clearForms()
+    }
   }
 
-  deletePhotoClick = (photo, history) => {
-    history.push('/photos')
-    this.deletePhoto(photo.id)
-        .then(() => this.loadUser())
-  }
 
   clearForms = () =>
     this.setState({edit: {}})
 
   redirected = () => 
-    this.setState({redirect: false})
+    this.setState({redirect: null})
 
 
   // Render:
@@ -198,61 +227,52 @@ class App extends Component {
     let {user, redirect, photos, filters, filterOptions, edit} = this.state
     return (
       <Router>
+        {redirect ? <> 
+          <Redirect to={redirect} />
+          {this.redirected()}
+        </> : null}
         <Fragment>
           <Header 
             user={user}
             onLogout={this.logout}
           />
-          <Route path="/" exact
-            render={() => 
-              <Home
-                user={user}
-                onRedirected={this.redirected}
-              />
-            }
-          />
-          <Route path="/photos" exact
-            render={() => 
-              <IndexContainer 
-                user={user}
-                photos={this.filterSort()} 
-                filters={filters}
-                filterOptions={filterOptions}
-                edit={edit}
-                onClearForms={this.clearForms}
-                onFilterChange={this.filterChange}
-                onAlbumDetailsClick={this.albumDetailsClick}
-                onAlbumFormClick={this.albumFormClick}
-              />
-            }
-          />
-          <Route path="/photo/:id" exact
-            render={props => 
-              <ShowContainer 
-                {...props}
-                user={user}
-                photos={photos}
-                onDeletePhoto={this.deletePhotoClick}
-                onClickFilter={this.clickFilter}
-              />
-            }
-          />
-          <Route path="/signup" exact
-            render={() => 
-              <Signup 
-                redirect={redirect}
-                onSignup={this.signup}
-              />
-            }
-          />
-          <Route path="/login" exact
-            render={() => 
-              <Login
-                redirect={redirect}
-                onLogin={this.login}
-              />
-            }
-          />
+          <Route path="/" exact render={() => 
+            <Home
+              user={user}
+            />
+          }/>
+          <Route path="/photos" exact render={() => 
+            <IndexContainer 
+              user={user}
+              photos={this.filterSort()} 
+              album={this.albumSelected()}
+              filters={filters}
+              filterOptions={filterOptions}
+              edit={edit}
+              onClearForms={this.clearForms}
+              onFilterChange={this.filterChange}
+              onAlbumDetailsClick={this.albumDetailsClick}
+              onAlbumFormClick={this.albumFormClick}
+            />
+          }/>
+          <Route path="/photo/:id" exact render={() => 
+            <ShowContainer 
+              user={user}
+              photos={photos}
+              albumOptions={filterOptions.albums}
+              onClickDetail={this.clickDetail}
+            />
+          }/>
+          <Route path="/signup" exact render={() => 
+            <Signup 
+              onSignup={this.signup}
+            />
+          }/>
+          <Route path="/login" exact render={() => 
+            <Login
+              onLogin={this.login}
+            />
+          }/>
         </Fragment>
       </Router>
     );

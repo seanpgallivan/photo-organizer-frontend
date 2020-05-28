@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {Redirect} from 'react-router-dom'
 import {Form, Button, Grid, Header} from 'semantic-ui-react';
 import {Link} from 'react-router-dom'
 
@@ -19,7 +18,6 @@ class Login extends Component {
   render() {
     return (
       <div className="home">
-        {this.props.redirect ? <Redirect to='/' /> : null}
         <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
           <Grid.Column style={{ maxWidth: 450 }}>
             <Header as='h1' inverted textAlign='center'>

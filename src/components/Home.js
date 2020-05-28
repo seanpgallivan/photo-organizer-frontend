@@ -3,11 +3,6 @@ import {Link} from 'react-router-dom'
 import {Grid, Button} from 'semantic-ui-react'
 
 class Home extends Component {
-
-    componentDidMount() {
-        this.props.onRedirected()
-    }
-
     render() {
         let {user} = this.props
         return (
