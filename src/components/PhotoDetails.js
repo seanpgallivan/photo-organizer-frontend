@@ -34,7 +34,7 @@ const PhotoDetails = ({photo, albumOptions, onClickDetail}) => {
         ).concat(
             <button 
                 key='alb-a' 
-                className={edit === 'album' ? 'hidden' : 'btn-f mod'} 
+                className={edit === 'album' || photo.albums.length === albumOptions.length ? 'hidden' : 'btn-f mod'} 
                 data-type='album'
                 onClick={handleOpenForm}
             >+</button>)
@@ -98,7 +98,7 @@ const PhotoDetails = ({photo, albumOptions, onClickDetail}) => {
 
     const handleClickDetail = (e, t) => {
         let {act, type, val} = t || e.target.dataset
-        if (val) {
+        if (val || act === 'delete') {
             onClickDetail(photo, act, type, val)
             setEdit(null)
         }

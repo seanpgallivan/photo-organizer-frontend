@@ -25,8 +25,7 @@ const INITIAL_STATE = {
     tags: [],
     people: [],
     locations: []
-  },
-  edit: {}
+  }
 }
 
 class App extends Component {
@@ -104,7 +103,11 @@ class App extends Component {
       headers: {"Content-Type": "application/json", "Accept": "application/json"}
     }).then(r => r.json())
   postAlbumsPhoto = (aid, pid) =>
-    console.log("making an album_photo!")
+    fetch("http://localhost:4000/albums_photos", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Accept": "application/json"},
+      body: JSON.stringify({album_id: aid, photo_id: pid})
+    }).then(r => r.json())
   deleteAlbumsPhoto = (aid, pid) =>
     fetch(`http://localhost:4000/albums_photos/${aid},${pid}`, {
       method: "DELETE",
@@ -115,9 +118,10 @@ class App extends Component {
   // Builder Function
   buildState = (data, redirect='/photos') => {
     if (data) {
-      let albumsOptions = data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1),
-          tagsOptions = data.tags.map(opt => ({key: opt, value: opt, text: opt})),
-          peopleOptions = data.people.map(opt => ({key: opt, value: opt, text: opt})),
+      let unassigned = [{key: '< unassigned >', value: '< unassigned >', text: '< unassigned >'}],
+          albumsOptions = unassigned.concat(data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1)),
+          tagsOptions = unassigned.concat(data.tags.map(opt => ({key: opt, value: opt, text: opt}))),
+          peopleOptions = unassigned.concat(data.people.map(opt => ({key: opt, value: opt, text: opt}))),
           locationsOptions = data.locations.map(opt => ({key: opt, value: opt, text: opt}))
       this.setState({
         user: {
@@ -146,9 +150,12 @@ class App extends Component {
   filterSort = () => {
     let {photos, filters} = this.state
     if (filters.location) photos = photos.filter(photo => photo.location===filters.location)
-    if (filters.tag) photos = photos.filter(photo => photo.tags.includes(filters.tag))
-    if (filters.person) photos = photos.filter(photo => photo.people.includes(filters.person))
-    if (filters.album) photos = photos.filter(photo => photo.albums.map(album => album.name).includes(filters.album))
+    if (filters.tag) photos = photos.filter(photo => 
+      filters.tag === '< unassigned >' ? photo.tags.length < 1 : photo.tags.includes(filters.tag))
+    if (filters.person) photos = photos.filter(photo => 
+      filters.person === '< unassigned >' ? photo.people.length < 1 : photo.people.includes(filters.person))
+    if (filters.album) photos = photos.filter(photo => 
+      filters.album === '< unassigned >' ? photo.albums.length < 1 : photo.albums.map(al => al.name).includes(filters.album))
     return photos
   }
 
@@ -162,8 +169,24 @@ class App extends Component {
     this.setState({filters: newFilter})
   }
   
+  completeIndexForm = (target, action, type) => {
+    console.log(target, action)
+    if (action === 'delete album')
+      this.setState(prev => ({filters: {...prev.filters, album: null}}), () =>
+        this.deleteAlbum(target.id)
+          .then(() => this.loadUser()))
+    if (action === "edit album") 
+      this.setState(prev => ({filters: {...prev.filters, album: target.name}}), () =>
+        this.patchAlbum(target)
+          .then(() => this.loadUser()))
+    if (action === "new album") 
+      this.postAlbum({...target, user_id: this.state.user.id})
+        .then(() => this.loadUser())
+    
+  }
+
+
   clickDetail = (photo, act, type, val) => {
-    console.log(photo.id, act, type, val)
     if (act === 'filter') 
       this.setState({
         filters: {
@@ -182,44 +205,20 @@ class App extends Component {
       this.patchPhoto({id: photo.id, [type]: photo[type].filter(el => el !== val)})
         .then(() => this.loadUser(null))
     if (act === 'add' && type === 'albums')
-      console.log("todo")
+      this.postAlbumsPhoto(this.state.albums.find(al => al.name === val).id, photo.id)
+        .then(() => this.loadUser(null))
     if (act === 'add' && type !== 'albums')
       this.patchPhoto({id: photo.id, [type]: [...photo[type], val]})
         .then(() => this.loadUser(null))
+    if (act === 'edit')
+      this.patchPhoto({id: photo.id, [type]: val})
+        .then(() => this.loadUser(null))
     }
-
-  albumDetailsClick = (album, action) => {
-    if (action === "delete") 
-      this.setState(prev => ({filters: {...prev.filters, album: null}}), () =>
-        this.deleteAlbum(album.id)
-          .then(() => this.loadUser())
-      )
-    if (action === "new")
-      this.setState({edit: {album: {}}})
-    if (action === "edit")
-      this.setState({edit: {album: album}})
-  }
-
-  albumFormClick = (album, action) => {
-    if (action === "confirm" && album.id) {
-      this.setState(prev => ({filters: {...prev.filters, album: album.name}}), () =>
-        this.patchAlbum(album)
-          .then(() => this.loadUser())
-      )
-    } else if (action === "confirm") {
-      this.postAlbum({...album, user_id: this.state.user.id})
-        .then(() => this.loadUser())
-    } else {
-      this.clearForms()
-    }
-  }
-
-
-  clearForms = () =>
-    this.setState({edit: {}})
 
   redirected = () => 
     this.setState({redirect: null})
+
+
 
 
   // Render:
@@ -248,11 +247,9 @@ class App extends Component {
               album={this.albumSelected()}
               filters={filters}
               filterOptions={filterOptions}
-              edit={edit}
               onClearForms={this.clearForms}
               onFilterChange={this.filterChange}
-              onAlbumDetailsClick={this.albumDetailsClick}
-              onAlbumFormClick={this.albumFormClick}
+              onCompleteIndexForm={this.completeIndexForm}
             />
           }/>
           <Route path="/photo/:id" exact render={() => 

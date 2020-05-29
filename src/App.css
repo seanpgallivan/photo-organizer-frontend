@@ -81,6 +81,23 @@ img {
 a {
   color: #208cf7;
 }
+.side-header {
+  font-size: 24px;
+  font-weight: bold;
+  width: 325px;
+  height: 40px;
+  line-height: 40px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.side-box {
+  width: 250px;
+  display: inline-block;
+  height: 40px;
+  font-size: 18px;
+  line-height: 40px;
+
+}
 .lbl-deet {
   display: inline-block;
   margin: 20px 7px 5px 0px;
@@ -130,9 +147,8 @@ a {
 }
 .counter {
   display: inline-flex;
-  width: 325px;
+  width: 280px;
   line-height: 35px;
-  padding-left: 15px;
   font-size: 20px;
   font-weight: bold;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import {Form, Select, Label, Button} from 'semantic-ui-react'
 
-const Filter = ({filters: {album, tag, person, location}, count, filterOptions, onFilterChange}) => {
+const Filter = ({filters: {album, tag, person, location}, filterOptions, onFilterChange}) => {
 
     const handleFilterChange = (e, target) => {
         let type = target ? target.name : e.target.name
@@ -12,6 +12,10 @@ const Filter = ({filters: {album, tag, person, location}, count, filterOptions, 
 
     return (
         <div className="sideitem">
+            <div className='side-header'>Filters:</div>
+            <div className={album||tag||person||location ? 'btn-clear' : 'hidden'}>
+                <Button name="clear" color="teal" onClick={handleFilterChange}>Clear All</Button>
+            </div>
             <Form>
                 <Form.Field inline>
                     <Select name='album' value={album ? album : null} options={filterOptions.albums} onChange={handleFilterChange}/>
@@ -33,12 +37,6 @@ const Filter = ({filters: {album, tag, person, location}, count, filterOptions, 
                     {location ? <button name='location' className='btn-f loc buff' onClick={handleFilterChange}>X</button> : null}
                     <Label pointing='left' className={location ? 'lbl-loc-act' : 'lbl-loc'}>{!location ? 'Filter by ' : ''}Location</Label>
                 </Form.Field>
-                <div className='count-clear'>
-                    <div className='counter'>{count} Photos</div>
-                    <div className={album||tag||person||location ? 'btn-clear' : 'hidden'}>
-                        <Button name="clear" color="teal" onClick={handleFilterChange}>Clear All</Button>
-                    </div>
-                </div>
             </Form>
         </div>
     )
