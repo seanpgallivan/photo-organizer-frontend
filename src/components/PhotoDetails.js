@@ -246,11 +246,13 @@ const PhotoDetails = ({photo, albumOptions, onClickDetail}) => {
             </div>
             <div className='button-box'>
                 <Button 
+                    disabled={edit}
                     color='teal' 
                     as={Link} 
                     to='/photos'
                 >Back</Button>
                 <Button 
+                    disabled={edit}
                     color='red' 
                     act='delete' 
                     onClick={handleClickDetail}

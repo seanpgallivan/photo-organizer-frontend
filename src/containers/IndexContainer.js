@@ -17,6 +17,18 @@ const IndexContainer = ({photos, album, filters, filterOptions, onFilterChange, 
           filterOptions={filterOptions}
           onFilterChange={onFilterChange}
         />
+        {edit?.photo ? (
+          <PhotosForm 
+            onSetEdit={setEdit}
+            onCompleteIndexForm={onCompleteIndexForm}
+          />
+        ) : (
+          <PhotosInfo
+            count={photos.length}
+            onSetEdit={setEdit}
+            onCompleteIndexForm={onCompleteIndexForm}
+          />  
+        )} 
         {edit?.album ? (
           <AlbumForm 
             album={edit?.album}
@@ -30,23 +42,11 @@ const IndexContainer = ({photos, album, filters, filterOptions, onFilterChange, 
             onCompleteIndexForm={onCompleteIndexForm}
           />  
         )} 
-        {edit?.photo ? (
-          <PhotosForm 
-            onSetEdit={setEdit}
-            onCompleteIndexForm={onCompleteIndexForm}
-          />
-        ) : (
-          <PhotosInfo
-            count={photos.length}
-            onSetEdit={setEdit}
-            onCompleteIndexForm={onCompleteIndexForm}
-          />  
-        )} 
       </div>
       <ThumbsContainer 
         photos={photos}
       />
-    // </>
+    </>
   )
 }
 

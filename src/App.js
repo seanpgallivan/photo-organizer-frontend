@@ -131,7 +131,7 @@ class App extends Component {
           bio: data.bio
         },
         redirect: redirect,
-        photos: data.photos,
+        photos: data.photos.sort((a,b)=>a.id>b.id?1:-1),
         albums: data.albums,
         filterOptions: {
           albums: albumsOptions,
@@ -182,7 +182,9 @@ class App extends Component {
     if (action === "new album") 
       this.postAlbum({...target, user_id: this.state.user.id})
         .then(() => this.loadUser())
-    
+    if (action === "new photo")
+      this.postPhoto({...target, tags: [], people: [], albums: [], user_id: this.state.user.id})
+        .then(data => this.loadUser(`/photo/${data.id}`))
   }
 
 
@@ -223,7 +225,7 @@ class App extends Component {
 
   // Render:
   render() {
-    let {user, redirect, photos, filters, filterOptions, edit} = this.state
+    let {user, redirect, photos, filters, filterOptions} = this.state
     return (
       <Router>
         {redirect ? <> 
