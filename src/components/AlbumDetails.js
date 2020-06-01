@@ -27,7 +27,7 @@ const AlbumDetails = ({album, onSetEdit, onCompleteIndexForm}) => {
         ) : (
           <div className='side-box'>No Album Selected...</div>
         )}
-        <Button inline name="new" color="teal" onClick={handleClick}>Create a New Album</Button>
+        <Button name="new" color="teal" onClick={handleClick}>Create a New Album</Button>
       </div>
     </div>
   )

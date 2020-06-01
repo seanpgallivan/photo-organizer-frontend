@@ -1,12 +1,11 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {Link} from 'react-router-dom'
 import {Grid, Button} from 'semantic-ui-react'
 
-class Home extends Component {
-    render() {
-        let {user} = this.props
-        return (
-            <div className="home">
+const Home = ({user}) => {
+    return (
+        <div className='home'>
+            <div className='fade-in'>
                 <Grid className="homebox" verticalAlign='middle'>
                     <Grid.Column className="homecontent">
                         <div className="homeimage"></div>
@@ -22,8 +21,8 @@ class Home extends Component {
                     </Grid.Column>
                 </Grid>
             </div>
-        )
-    }
+        </div>
+    )
 }
   
 export default Home

@@ -8,6 +8,7 @@ import Login from './components/Login'
 import Signup from './components/Signup'
 import IndexContainer from './containers/IndexContainer'
 import ShowContainer from './containers/ShowContainer'
+import {api} from './services/api'
 
 const INITIAL_STATE = {
   user: null,
@@ -25,124 +26,65 @@ const INITIAL_STATE = {
     tags: [],
     people: [],
     locations: []
-  }
+  },
+  error: null
 }
 
 class App extends Component {
   state = INITIAL_STATE
 
 
+
   // Lifecycle Functions:
   componentDidMount() {
-    this.login()
+    let localUser = localStorage.getItem('username')
+    if (localUser) this.loadUser('/photos', localUser)
   }
+
 
 
   // User Management:
-  login = user => {
-    let localUser = localStorage.getItem('username')
-    if (localUser || user) this.setState({user: {username: (user ? user : localUser)}}, this.loadUser)
-  }
-
+  loadUser = (redirect=null, username=this.state.user.username) => 
+    api.data.getUser(username)
+      .then(data => this.buildState(data, redirect))
+      .catch(err => this.setState({error: err.message}))
   logout = () => {
     this.setState(INITIAL_STATE)
     localStorage.removeItem('username')
   }
-  
   signup = user =>
-    this.postUser(user)
-      .then(this.buildState)
-  
-  loadUser = (redirect='/photos') => 
-    this.getUser(this.state.user.username)
-      .then(data => this.buildState(data, redirect))
-  
+    api.data.postUser(user)
+      .then(data => this.buildState(data, '/photos'))
+      .catch(err => this.setState({error: err}))
 
-  // Fetches:
-  getUser = username =>
-    fetch(`http://localhost:4000/users/${username}`)
-      .then(r => r.json())
-  postUser = user => 
-    fetch("http://localhost:4000/users", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify(user)
-    }).then(r => r.json())
-  postAlbum = album => 
-    fetch("http://localhost:4000/albums", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify(album)
-    }).then(r => r.json())
-  patchAlbum = album => 
-    fetch(`http://localhost:4000/albums/${album.id}`, {
-      method: "PATCH",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify(album)
-    }).then(r => r.json())
-  deleteAlbum = id => 
-    fetch(`http://localhost:4000/albums/${id}`, {
-      method: "DELETE",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"}
-    }).then(r => r.json())
-  postPhoto = photo =>
-    fetch("http://localhost:4000/photos", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify(photo)
-    }).then(r => r.json())
-  patchPhoto = photo =>
-    fetch(`http://localhost:4000/photos/${photo.id}`, {
-      method: "PATCH",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify(photo)
-    }).then(r => r.json())
-  deletePhoto = id => 
-    fetch(`http://localhost:4000/photos/${id}`, {
-      method: "DELETE",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"}
-    }).then(r => r.json())
-  postAlbumsPhoto = (aid, pid) =>
-    fetch("http://localhost:4000/albums_photos", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"},
-      body: JSON.stringify({album_id: aid, photo_id: pid})
-    }).then(r => r.json())
-  deleteAlbumsPhoto = (aid, pid) =>
-    fetch(`http://localhost:4000/albums_photos/${aid},${pid}`, {
-      method: "DELETE",
-      headers: {"Content-Type": "application/json", "Accept": "application/json"}
-    }).then(r => r.json())
-  
+
+
 
   // Builder Function
-  buildState = (data, redirect='/photos') => {
-    if (data) {
-      let unassigned = [{key: '< unassigned >', value: '< unassigned >', text: '< unassigned >'}],
-          albumsOptions = unassigned.concat(data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1)),
-          tagsOptions = unassigned.concat(data.tags.map(opt => ({key: opt, value: opt, text: opt}))),
-          peopleOptions = unassigned.concat(data.people.map(opt => ({key: opt, value: opt, text: opt}))),
-          locationsOptions = data.locations.map(opt => ({key: opt, value: opt, text: opt}))
-      this.setState({
-        user: {
-          id: data.id,
-          username: data.username,
-          fullname: data.fullname,
-          bio: data.bio
-        },
-        redirect: redirect,
-        photos: data.photos.sort((a,b)=>a.id>b.id?1:-1),
-        albums: data.albums,
-        filterOptions: {
-          albums: albumsOptions,
-          tags: tagsOptions,
-          people: peopleOptions,
-          locations: locationsOptions
-        },
-        edit: {}
-      })
-      localStorage.setItem('username', data.username)
-    }
+  buildState = (data, redirect) => {
+    let unassigned = [{key: '< unassigned >', value: '< unassigned >', text: '< unassigned >'}],
+        albumsOptions = unassigned.concat(data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1)),
+        tagsOptions = unassigned.concat(data.tags.map(opt => ({key: opt, value: opt, text: opt}))),
+        peopleOptions = unassigned.concat(data.people.map(opt => ({key: opt, value: opt, text: opt}))),
+        locationsOptions = data.locations.map(opt => ({key: opt, value: opt, text: opt}))
+    this.setState({
+      user: {
+        id: data.id,
+        username: data.username,
+        fullname: data.fullname,
+        bio: data.bio
+      },
+      redirect: redirect,
+      photos: data.photos.sort((a,b)=>a.id>b.id?1:-1),
+      albums: data.albums,
+      filterOptions: {
+        albums: albumsOptions,
+        tags: tagsOptions,
+        people: peopleOptions,
+        locations: locationsOptions
+      }
+    })
+    localStorage.setItem('username', data.username)
   }
 
 
@@ -173,17 +115,17 @@ class App extends Component {
     console.log(target, action)
     if (action === 'delete album')
       this.setState(prev => ({filters: {...prev.filters, album: null}}), () =>
-        this.deleteAlbum(target.id)
+        api.data.deleteAlbum(target.id)
           .then(() => this.loadUser()))
     if (action === "edit album") 
       this.setState(prev => ({filters: {...prev.filters, album: target.name}}), () =>
-        this.patchAlbum(target)
+        api.data.patchAlbum(target)
           .then(() => this.loadUser()))
     if (action === "new album") 
-      this.postAlbum({...target, user_id: this.state.user.id})
+      api.data.postAlbum({...target, user_id: this.state.user.id})
         .then(() => this.loadUser())
     if (action === "new photo")
-      this.postPhoto({...target, tags: [], people: [], albums: [], user_id: this.state.user.id})
+      api.data.postPhoto({...target, tags: [], people: [], albums: [], user_id: this.state.user.id})
         .then(data => this.loadUser(`/photo/${data.id}`))
   }
 
@@ -198,22 +140,22 @@ class App extends Component {
         redirect: '/photos'})
     if (act === 'delete') 
       this.setState({redirect: '/photos'}, 
-        () => this.deletePhoto(photo.id)
+        () => api.data.deletePhoto(photo.id)
           .then(() => this.loadUser(null)))
     if (act === 'remove' && type === 'albums')
-      this.deleteAlbumsPhoto(photo.albums.find(al => al.name === val).id, photo.id)
+      api.data.deleteAlbumsPhoto(photo.albums.find(al => al.name === val).id, photo.id)
         .then(() => this.loadUser(null))
     if (act === 'remove' && type !== 'albums')
-      this.patchPhoto({id: photo.id, [type]: photo[type].filter(el => el !== val)})
+      api.data.patchPhoto({id: photo.id, [type]: photo[type].filter(el => el !== val)})
         .then(() => this.loadUser(null))
     if (act === 'add' && type === 'albums')
-      this.postAlbumsPhoto(this.state.albums.find(al => al.name === val).id, photo.id)
+      api.data.postAlbumsPhoto(this.state.albums.find(al => al.name === val).id, photo.id)
         .then(() => this.loadUser(null))
     if (act === 'add' && type !== 'albums')
-      this.patchPhoto({id: photo.id, [type]: [...photo[type], val]})
+      api.data.patchPhoto({id: photo.id, [type]: [...photo[type], val]})
         .then(() => this.loadUser(null))
     if (act === 'edit')
-      this.patchPhoto({id: photo.id, [type]: val})
+      api.data.patchPhoto({id: photo.id, [type]: val})
         .then(() => this.loadUser(null))
     }
 
@@ -221,11 +163,16 @@ class App extends Component {
     this.setState({redirect: null})
 
 
+  
+  
 
 
   // Render:
   render() {
-    let {user, redirect, photos, filters, filterOptions} = this.state
+    let {user, redirect, photos, filters, filterOptions, error} = this.state
+    const cb = {
+      buildState: this.buildState
+    }
     return (
       <Router>
         {redirect ? <> 
@@ -264,12 +211,13 @@ class App extends Component {
           }/>
           <Route path="/signup" exact render={() => 
             <Signup 
+              error={error?.signup}
               onSignup={this.signup}
             />
           }/>
           <Route path="/login" exact render={() => 
             <Login
-              onLogin={this.login}
+              cb={cb}
             />
           }/>
         </Fragment>
