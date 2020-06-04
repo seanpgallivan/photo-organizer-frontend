@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import {Form, Button, Grid, Header} from 'semantic-ui-react';
 import {Link} from 'react-router-dom'
-import {api} from '../services/api'
 
-const Login = ({cb}) => {
+const Login = ({app: {api, cb}}) => {
   let [field, setField] = useState('')
   let [error, setError] = useState(null)
 
+
+
+  // Event Handlers:
   const handleChange = e => 
     setField(e.target.value)
 
@@ -14,6 +16,7 @@ const Login = ({cb}) => {
     api.data.getUser(field)
       .then(data => cb.buildState(data, '/photos'))
       .catch(err => setError(err.message))
+
 
 
   return (

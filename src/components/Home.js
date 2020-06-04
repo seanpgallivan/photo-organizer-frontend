@@ -2,7 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import {Grid, Button} from 'semantic-ui-react'
 
-const Home = ({user}) => {
+const Home = ({app: {state: {user}}}) => {
     return (
         <div className='home'>
             <div className='fade-in'>

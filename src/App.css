@@ -170,35 +170,35 @@ a {
 .btn-clear {
   display: inline-flex;
 }
-.alb, .ui.left.pointing.label.lbl-alb {
+.albums, .ui.left.pointing.label.lbl-alb {
  color: darkorchid;
  border-color: darkorchid;
 }
-.alb:hover, .ui.left.pointing.label.lbl-alb-act {
+.albums:hover, .ui.left.pointing.label.lbl-alb-act {
   color: white;
   background: darkorchid;
 }
-.tag, .ui.left.pointing.label.lbl-tag {
+.tags, .ui.left.pointing.label.lbl-tag {
   color: #208cf7;
   border-color: #208cf7;
 }
-.tag:hover, .ui.left.pointing.label.lbl-tag-act {
+.tags:hover, .ui.left.pointing.label.lbl-tag-act {
   color: white;
   background: #208cf7;
 }
-.per, .ui.left.pointing.label.lbl-per {
+.people, .ui.left.pointing.label.lbl-per {
   color: green;
   border-color: green;
 }
-.per:hover, .ui.left.pointing.label.lbl-per-act {
+.people:hover, .ui.left.pointing.label.lbl-per-act {
   color: white;
   background: green;
 }
-.loc, .ui.left.pointing.label.lbl-loc {
+.location, .ui.left.pointing.label.lbl-loc {
   color: darkorange;
   border-color: darkorange;
 }
-.loc:hover, .ui.left.pointing.label.lbl-loc-act {
+.location:hover, .ui.left.pointing.label.lbl-loc-act {
   color: white;
   background: darkorange;
 }
@@ -216,9 +216,9 @@ a {
 .detail-form {
   margin-left: 20px;
 }
-.detail-form > input {
+.input-detail {
   font-size: 14px;
-  margin: 10px 10px 0px 0px;
+  margin: 0px 10px 0px 0px;
   padding: 10px;
   width: 310px;
 }

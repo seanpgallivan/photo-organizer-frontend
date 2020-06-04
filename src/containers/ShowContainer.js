@@ -3,25 +3,17 @@ import {useParams} from 'react-router-dom'
 import PhotoDetails from '../components/PhotoDetails'
 import PhotoDisplay from '../components/PhotoDisplay'
 
-const ShowContainer = ({photos, albumOptions, onClickDetail}) => {
+const ShowContainer = ({app, app: {state: {photos}}}) => {
   let {id} = useParams()
-
-  const findPhoto = () =>
-    photos.find(photo => photo.id === parseInt(id))
+  app.state.photo = photos.find(photo => photo.id === parseInt(id))
   
   return (
-    photos.length === 0 ? null : (
+    photos.length !== 0 && (
       <>
         <div className="sidebox">
-          <PhotoDetails 
-            photo={findPhoto()}
-            albumOptions={albumOptions}
-            onClickDetail={onClickDetail}
-          />
+          <PhotoDetails app={app} />
         </div>
-        <PhotoDisplay
-          photo={findPhoto()}
-        />
+        <PhotoDisplay app={app} />
       </>
     )
   )

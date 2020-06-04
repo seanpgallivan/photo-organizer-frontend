@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import {Button, Input} from 'semantic-ui-react'
+import {Input, Button} from 'semantic-ui-react'
 
-const PhotosForm = ({onSetEdit, onCompleteIndexForm}) => {
+const PhotosForm = ({app: {api, cb, state: {user}}, onSetEdit}) => {
   const [fields, setFields] = useState({
     filename: '', 
     description: '', 
@@ -9,15 +9,22 @@ const PhotosForm = ({onSetEdit, onCompleteIndexForm}) => {
   })
   const {filename, description, location} = fields
 
-  const handleClick = (_e, t) => {
-    if (t.name === 'confirm') 
-      onCompleteIndexForm(fields, 'new photo')
-    if (t.name === 'cancel') 
-      onSetEdit(null)
-  }
-    
-  const handleFormChange = (_e, t) => 
-    setFields({...fields, [t.name]: t.value})
+
+  // Event Handlers:
+  const handleFormChange = e => 
+    setFields({...fields, [e.target.name]: e.target.value})
+
+  const handleSetEdit = () =>
+    onSetEdit(null)
+
+  const handleClick = () =>
+    api.data.postPhoto({...fields, tags: [], people: [], albums: [], user_id: user.id})
+      .then(data => {
+        cb.filterChange({albums: fields.name})
+        cb.loadUser(`/photo/${data.id}`)
+        onSetEdit(null)
+      }).catch(console.log)
+
 
   return (
     <div className="sideitem">
@@ -35,8 +42,8 @@ const PhotosForm = ({onSetEdit, onCompleteIndexForm}) => {
           <Input name="location" value={location} onChange={handleFormChange} />
       </div>
       <div className='button-box'>
-          <Button name="confirm" disabled={!filename || !description || !location} color="teal" onClick={handleClick}>Confirm</Button>
-          <Button name="cancel" color="black" onClick={handleClick}>Cancel</Button>
+          <Button disabled={!filename || !description || !location} color="teal" onClick={handleClick}>Confirm</Button>
+          <Button color="black" onClick={handleSetEdit}>Cancel</Button>
       </div>
     </div>
   )

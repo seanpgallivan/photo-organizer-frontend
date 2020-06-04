@@ -1,40 +1,42 @@
 import React from 'react'
 import {Form, Select, Label, Button} from 'semantic-ui-react'
 
-const Filter = ({filters: {album, tag, person, location}, filterOptions, onFilterChange}) => {
+const Filter = ({app: {cb, state: {filters: {albums, tags, people, location}, filterOptions}}, onSetEdit}) => {
 
-    const handleFilterChange = (e, target) => {
-        let type = target ? target.name : e.target.name
-        let val = target ? target.value : null
+    const handleFilterChange = (e, t) => {
+        let type = t ? t.name : e.target.name
+        let val = t ? t.value : null
         let filter = type==='clear' ? null : {[type]: val}
-        onFilterChange(filter)
+        cb.filterChange(filter)
+        onSetEdit(null)
     }
+
 
     return (
         <div className="sideitem">
             <div className='side-header'>Filters:</div>
-            <div className={album||tag||person||location ? 'btn-clear' : 'hidden'}>
+            <div className={albums||tags||people||location ? 'btn-clear' : 'hidden'}>
                 <Button name="clear" color="teal" onClick={handleFilterChange}>Clear All</Button>
             </div>
             <Form>
                 <Form.Field inline>
-                    <Select name='album' value={album ? album : null} options={filterOptions.albums} onChange={handleFilterChange}/>
-                    {album ? <button name='album' className='btn-f alb buff' onClick={handleFilterChange}>X</button> : null}
-                    <Label pointing='left' className={album ? 'lbl-alb-act' : 'lbl-alb'}>{!album ? 'Filter by ' : ''}Album</Label>
+                    <Select name='albums' value={albums || null} options={filterOptions.albums} onChange={handleFilterChange}/>
+                    {albums && <button name='albums' className='btn-f albums buff' onClick={handleFilterChange}>X</button>}
+                    <Label pointing='left' className={albums ? 'lbl-alb-act' : 'lbl-alb'}>{!albums ? 'Filter by ' : ''}Album</Label>
                 </Form.Field>
                 <Form.Field inline>
-                    <Select name='tag' value={tag ? tag : null} options={filterOptions.tags} onChange={handleFilterChange}/>
-                    {tag ? <button name='tag' className='btn-f tag buff' onClick={handleFilterChange}>X</button> : null}
-                    <Label pointing='left' className={tag ? 'lbl-tag-act' : 'lbl-tag'}>{!tag ? 'Filter by ' : ''}Tag</Label>
+                    <Select name='tags' value={tags || null} options={filterOptions.tags} onChange={handleFilterChange}/>
+                    {tags && <button name='tags' className='btn-f tags buff' onClick={handleFilterChange}>X</button>}
+                    <Label pointing='left' className={tags ? 'lbl-tag-act' : 'lbl-tag'}>{!tags ? 'Filter by ' : ''}Tag</Label>
                 </Form.Field>
                 <Form.Field inline>
-                    <Select name='person' value={person ? person : null} options={filterOptions.people} onChange={handleFilterChange}/>
-                    {person ? <button name='person' className='btn-f per buff' onClick={handleFilterChange}>X</button> : null}
-                    <Label pointing='left' className={person ? 'lbl-per-act' : 'lbl-per'}>{!person ? 'Filter by ' : ''}Person</Label>
+                    <Select name='people' value={people || null} options={filterOptions.people} onChange={handleFilterChange}/>
+                    {people && <button name='people' className='btn-f people buff' onClick={handleFilterChange}>X</button>}
+                    <Label pointing='left' className={people ? 'lbl-per-act' : 'lbl-per'}>{!people ? 'Filter by ' : ''}Person</Label>
                 </Form.Field>
                 <Form.Field inline>
-                    <Select name='location' value={location ? location : null} options={filterOptions.locations} onChange={handleFilterChange}/>
-                    {location ? <button name='location' className='btn-f loc buff' onClick={handleFilterChange}>X</button> : null}
+                    <Select name='location' value={location || null} options={filterOptions.locations} onChange={handleFilterChange}/>
+                    {location && <button name='location' className='btn-f location buff' onClick={handleFilterChange}>X</button>}
                     <Label pointing='left' className={location ? 'lbl-loc-act' : 'lbl-loc'}>{!location ? 'Filter by ' : ''}Location</Label>
                 </Form.Field>
             </Form>

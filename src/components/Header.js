@@ -2,10 +2,10 @@ import React from 'react'
 import {Menu, Image} from 'semantic-ui-react'
 import {NavLink} from 'react-router-dom'
 
-const Header = ({user, onLogout}) => {
+const Header = ({app: {cb, state: {user}}}) => {
 
     const handleClick = () =>
-        onLogout()
+        cb.logout()
 
     return (
         <Menu inverted size="massive" className={user ? "loggedin" : null}>

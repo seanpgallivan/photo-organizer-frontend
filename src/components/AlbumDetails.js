@@ -1,14 +1,20 @@
 import React from 'react'
 import {Button} from 'semantic-ui-react'
 
-const AlbumDetails = ({album, onSetEdit, onCompleteIndexForm}) => {
+const AlbumDetails = ({app: {api, cb, state: {album}}, onSetEdit}) => {
 
-  const handleClick = (_e, t) => {
-    if (t.name === 'new') onSetEdit({album: {}})
-    if (t.name === 'edit') onSetEdit({album: album})
-    if (t.name === 'delete') onCompleteIndexForm(album, 'delete album')
-  }
-        
+  const handleSetEdit = e => 
+    onSetEdit({album: (e.target.name==='new' ? {} : album)})
+
+  const onDeleteAlbum = () => 
+    api.data.deleteAlbum(album.id)
+      .then(() => {
+        cb.filterChange({albums: null})
+        cb.loadUser()})
+      .catch(console.log)
+
+
+
   return (
     <div className="sideitem">
       <h2>Album Details:</h2>
@@ -21,13 +27,13 @@ const AlbumDetails = ({album, onSetEdit, onCompleteIndexForm}) => {
       <div className='button-box'>
         { album ? (
           <div className='side-box'>
-            <Button name="edit" color="teal" onClick={handleClick}>Edit</Button>
-            <Button name="delete" color="red" onClick={handleClick}>Delete</Button>
+            <Button color="teal" onClick={handleSetEdit}>Edit</Button>
+            <Button color="red" onClick={onDeleteAlbum}>Delete</Button>
           </div>
         ) : (
           <div className='side-box'>No Album Selected...</div>
         )}
-        <Button name="new" color="teal" onClick={handleClick}>Create a New Album</Button>
+        <Button name="new" color="teal" onClick={handleSetEdit}>Create a New Album</Button>
       </div>
     </div>
   )

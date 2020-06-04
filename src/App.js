@@ -16,9 +16,9 @@ const INITIAL_STATE = {
   photos: [],
   albums: [],
   filters: {
-    album: null,
-    tag: null,
-    person: null,
+    albums: null,
+    tags: null,
+    people: null,
     location: null
   },
   filterOptions: {
@@ -26,8 +26,7 @@ const INITIAL_STATE = {
     tags: [],
     people: [],
     locations: []
-  },
-  error: null
+  }
 }
 
 class App extends Component {
@@ -44,23 +43,19 @@ class App extends Component {
 
 
   // User Management:
-  loadUser = (redirect=null, username=this.state.user.username) => 
-    api.data.getUser(username)
-      .then(data => this.buildState(data, redirect))
-      .catch(err => this.setState({error: err.message}))
   logout = () => {
     this.setState(INITIAL_STATE)
     localStorage.removeItem('username')
   }
-  signup = user =>
-    api.data.postUser(user)
-      .then(data => this.buildState(data, '/photos'))
-      .catch(err => this.setState({error: err}))
-
 
 
 
   // Builder Function
+  loadUser = (redirect=null, username=this.state.user.username) => 
+    api.data.getUser(username)
+      .then(data => this.buildState(data, redirect))
+      .catch(err => this.setState({error: err.message}))
+
   buildState = (data, redirect) => {
     let unassigned = [{key: '< unassigned >', value: '< unassigned >', text: '< unassigned >'}],
         albumsOptions = unassigned.concat(data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1)),
@@ -88,137 +83,57 @@ class App extends Component {
   }
 
 
-  // Helper Functions:
-  filterSort = () => {
-    let {photos, filters} = this.state
-    if (filters.location) photos = photos.filter(photo => photo.location===filters.location)
-    if (filters.tag) photos = photos.filter(photo => 
-      filters.tag === '< unassigned >' ? photo.tags.length < 1 : photo.tags.includes(filters.tag))
-    if (filters.person) photos = photos.filter(photo => 
-      filters.person === '< unassigned >' ? photo.people.length < 1 : photo.people.includes(filters.person))
-    if (filters.album) photos = photos.filter(photo => 
-      filters.album === '< unassigned >' ? photo.albums.length < 1 : photo.albums.map(al => al.name).includes(filters.album))
-    return photos
-  }
-
-  albumSelected = () => 
-    this.state.albums.find(album => album.name === this.state.filters.album)
-
-
-  // Callbacks:
-  filterChange = filter => {
-    let newFilter = !filter ? {album: null, tag: null, person: null, location: null} : {...this.state.filters, ...filter}
-    this.setState({filters: newFilter})
-  }
   
-  completeIndexForm = (target, action, type) => {
-    console.log(target, action)
-    if (action === 'delete album')
-      this.setState(prev => ({filters: {...prev.filters, album: null}}), () =>
-        api.data.deleteAlbum(target.id)
-          .then(() => this.loadUser()))
-    if (action === "edit album") 
-      this.setState(prev => ({filters: {...prev.filters, album: target.name}}), () =>
-        api.data.patchAlbum(target)
-          .then(() => this.loadUser()))
-    if (action === "new album") 
-      api.data.postAlbum({...target, user_id: this.state.user.id})
-        .then(() => this.loadUser())
-    if (action === "new photo")
-      api.data.postPhoto({...target, tags: [], people: [], albums: [], user_id: this.state.user.id})
-        .then(data => this.loadUser(`/photo/${data.id}`))
-  }
-
-
-  clickDetail = (photo, act, type, val) => {
-    if (act === 'filter') 
-      this.setState({
-        filters: {
-          album: null, tag: null, person: null, location: null,
-          [type]: val
-        },
-        redirect: '/photos'})
-    if (act === 'delete') 
-      this.setState({redirect: '/photos'}, 
-        () => api.data.deletePhoto(photo.id)
-          .then(() => this.loadUser(null)))
-    if (act === 'remove' && type === 'albums')
-      api.data.deleteAlbumsPhoto(photo.albums.find(al => al.name === val).id, photo.id)
-        .then(() => this.loadUser(null))
-    if (act === 'remove' && type !== 'albums')
-      api.data.patchPhoto({id: photo.id, [type]: photo[type].filter(el => el !== val)})
-        .then(() => this.loadUser(null))
-    if (act === 'add' && type === 'albums')
-      api.data.postAlbumsPhoto(this.state.albums.find(al => al.name === val).id, photo.id)
-        .then(() => this.loadUser(null))
-    if (act === 'add' && type !== 'albums')
-      api.data.patchPhoto({id: photo.id, [type]: [...photo[type], val]})
-        .then(() => this.loadUser(null))
-    if (act === 'edit')
-      api.data.patchPhoto({id: photo.id, [type]: val})
-        .then(() => this.loadUser(null))
-    }
-
+  // Helper Functions:
   redirected = () => 
     this.setState({redirect: null})
 
 
-  
-  
+
+  // Callbacks:
+  filterChange = filter => {
+    let newFilter = !filter ? {albums: null, tags: null, people: null, location: null} : {...this.state.filters, ...filter}
+    this.setState({filters: newFilter})
+  }
+
+  onSetState = obj =>
+    this.setState(obj)
 
 
-  // Render:
+
   render() {
-    let {user, redirect, photos, filters, filterOptions, error} = this.state
-    const cb = {
-      buildState: this.buildState
+    const app = {
+      api,
+      cb: {
+        logout: this.logout,
+        loadUser: this.loadUser,
+        buildState: this.buildState,
+        filterChange: this.filterChange,
+        onSetState: this.onSetState},
+      state: {...this.state}
     }
     return (
       <Router>
-        {redirect ? <> 
-          <Redirect to={redirect} />
+        {this.state.redirect ? <> 
+          <Redirect to={this.state.redirect} />
           {this.redirected()}
         </> : null}
         <Fragment>
-          <Header 
-            user={user}
-            onLogout={this.logout}
-          />
+          <Header app={app} />
           <Route path="/" exact render={() => 
-            <Home
-              user={user}
-            />
+            <Home app={app} />
           }/>
           <Route path="/photos" exact render={() => 
-            <IndexContainer 
-              user={user}
-              photos={this.filterSort()} 
-              album={this.albumSelected()}
-              filters={filters}
-              filterOptions={filterOptions}
-              onClearForms={this.clearForms}
-              onFilterChange={this.filterChange}
-              onCompleteIndexForm={this.completeIndexForm}
-            />
+            <IndexContainer app={app} />
           }/>
           <Route path="/photo/:id" exact render={() => 
-            <ShowContainer 
-              user={user}
-              photos={photos}
-              albumOptions={filterOptions.albums}
-              onClickDetail={this.clickDetail}
-            />
+            <ShowContainer app={app} />
           }/>
           <Route path="/signup" exact render={() => 
-            <Signup 
-              error={error?.signup}
-              onSignup={this.signup}
-            />
+            <Signup app={app} />
           }/>
           <Route path="/login" exact render={() => 
-            <Login
-              cb={cb}
-            />
+            <Login app={app} />
           }/>
         </Fragment>
       </Router>

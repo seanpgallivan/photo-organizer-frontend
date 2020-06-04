@@ -2,19 +2,27 @@ import React, {useState} from 'react';
 import { Form, Button, Grid, Header } from 'semantic-ui-react';
 import {Link} from 'react-router-dom'
 
-const Signup = ({onSignup}) => {
+const Signup = ({cb: {api, cb}}) => {
   let [fields, setFields] = useState({
     username: '',
     fullname: '',
     bio: ''
   })
+  let [error, setError] = useState(null)
   let {username, fullname, bio} = fields
 
+  
+  
+  // Event Handlers:
   const handleChange = e => 
     setFields({...fields, [e.target.name]: e.target.value})
 
   const handleClick = () =>
-    onSignup(fields)
+    api.data.postUser({...fields})
+      .then(data => cb.buildState(data, '/photos'))
+      .catch(err => setError(err.message))
+
+
 
   return (
     <div className="home">
