@@ -75,7 +75,7 @@ const deleteAlbumsPhoto = (aid, pid) =>
   }).then(r => r.json()).then(handleErrors)
 
 const handleErrors = r => {
-  if (r.error) throw Error(r.error)
+  if (r.error) throw r.error
   return r
 }
 

@@ -24,7 +24,7 @@ const IndexContainer = ({app}) => {
   app.state.photos = filterSort()
 
 
-
+  
   return (
     <>
       <div className="sidebox">

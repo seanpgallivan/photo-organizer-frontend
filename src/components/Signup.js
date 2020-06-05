@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Form, Button, Grid, Header } from 'semantic-ui-react';
 import {Link} from 'react-router-dom'
 
-const Signup = ({cb: {api, cb}}) => {
+const Signup = ({app: {api, cb}}) => {
   let [fields, setFields] = useState({
     username: '',
     fullname: '',
@@ -20,7 +20,7 @@ const Signup = ({cb: {api, cb}}) => {
   const handleClick = () =>
     api.data.postUser({...fields})
       .then(data => cb.buildState(data, '/photos'))
-      .catch(err => setError(err.message))
+      .catch(err => console.log(err))
 
 
 
