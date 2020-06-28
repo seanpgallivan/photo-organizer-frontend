@@ -7,7 +7,7 @@ const PhotoDetailsForm = ({app: {api, cb, state: {albums, photo, filterOptions}}
 
     const findOptions = () => {
         let albs = photo.albums.map(alb => alb.name)
-        return filterOptions.albums.filter(opt => !albs.includes(opt.text))
+        return filterOptions.albums.filter(opt => !albs.includes(opt.text) && opt.text !== '< unassigned >')
     }
 
 
@@ -16,7 +16,7 @@ const PhotoDetailsForm = ({app: {api, cb, state: {albums, photo, filterOptions}}
         setField(t?.value || e.target?.value)
 
     const handleCancel = () =>
-        onSetEdit('null')
+        onSetEdit(null)
 
     const handleConfirm = e => 
         (type === 'albums'

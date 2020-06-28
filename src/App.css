@@ -77,6 +77,18 @@ body {
   100% { opacity:1; }
 }
 
+.error-user {
+  background: #cc1818;
+  color: white;
+  width: 95%;
+  margin: auto;
+  font-size: 16px;
+  line-height: 30px;
+  position: relative;
+  top: -15px;
+  border-radius: 0px 0px 15px 15px;
+}
+
 img {
   max-height: calc(100vh - 124px);
   max-width: calc(100vw - 574px);

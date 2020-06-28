@@ -11,8 +11,10 @@ const PhotosForm = ({app: {api, cb, state: {user}}, onSetEdit}) => {
 
 
   // Event Handlers:
-  const handleFormChange = e => 
-    setFields({...fields, [e.target.name]: e.target.value})
+  const handleFormChange = e => {
+    let {name, value} = e.target
+    setFields({...fields, [name]: value})
+  }
 
   const handleSetEdit = () =>
     onSetEdit(null)

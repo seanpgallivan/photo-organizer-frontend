@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 
 const Login = ({app: {api, cb}}) => {
   let [field, setField] = useState('')
-  let [error, setError] = useState(null)
+  let [errors, setErrors] = useState(null)
 
 
 
@@ -15,9 +15,11 @@ const Login = ({app: {api, cb}}) => {
   const handleClick = () => 
     api.data.getUser(field)
       .then(data => cb.buildState(data, '/photos'))
-      .catch(err => setError(err.message))
+      .catch(err => setErrors(err))
 
-
+  const showErrors = errors => 
+    errors && errors.map((er,i) => <div key={i}>{er}</div>)
+  
 
   return (
     <div className="home">
@@ -28,6 +30,7 @@ const Login = ({app: {api, cb}}) => {
           </Header>
           <Form size='large'>
             <Form.Input 
+              error={!!errors?.username}
               fluid 
               icon='user circle' 
               iconPosition='left' 
@@ -35,7 +38,7 @@ const Login = ({app: {api, cb}}) => {
               value={field}
               onChange={handleChange}
             />
-            {error && <div className='error-box'>{error}</div>}
+            <div className='error-user'>{showErrors(errors?.username)}</div>
             <Button 
               disabled={!field}
               color='teal' 

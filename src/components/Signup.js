@@ -8,7 +8,7 @@ const Signup = ({app: {api, cb}}) => {
     fullname: '',
     bio: ''
   })
-  let [error, setError] = useState(null)
+  let [errors, setErrors] = useState(null)
   let {username, fullname, bio} = fields
 
   
@@ -20,7 +20,11 @@ const Signup = ({app: {api, cb}}) => {
   const handleClick = () =>
     api.data.postUser({...fields})
       .then(data => cb.buildState(data, '/photos'))
-      .catch(err => console.log(err))
+      .catch(err => setErrors(err))
+
+  const showErrors = errors => 
+    errors && errors.map((er,i) => <div key={i}>{er}</div>)
+        
 
 
 
@@ -33,6 +37,7 @@ const Signup = ({app: {api, cb}}) => {
           </Header>
           <Form size='large' autoComplete="off">
             <Form.Input 
+              error={!!errors?.username}
               fluid 
               icon='user circle' 
               iconPosition='left' 
@@ -41,6 +46,7 @@ const Signup = ({app: {api, cb}}) => {
               value={username} 
               onChange={handleChange}
             />
+            <div className='error-user'>{showErrors(errors?.username)}</div>
             <Form.Input
               fluid
               icon='user circle'
@@ -50,6 +56,7 @@ const Signup = ({app: {api, cb}}) => {
               value={fullname}
               onChange={handleChange}
             />
+            <div className='error-user'>{showErrors(errors?.fullname)}</div>
             <Form.Input
               fluid
               icon='file text'
@@ -59,6 +66,7 @@ const Signup = ({app: {api, cb}}) => {
               value={bio}
               onChange={handleChange}
             />
+            <div className='error-user'>{showErrors(errors?.bio)}</div>
             <Button 
               disabled={!username || !fullname || !bio}
               color='teal' 
