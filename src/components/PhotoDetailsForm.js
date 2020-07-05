@@ -18,7 +18,7 @@ const PhotoDetailsForm = ({app: {api, cb, state: {albums, photo, filterOptions}}
     const handleCancel = () =>
         onSetEdit(null)
 
-    const handleConfirm = e => 
+    const handleConfirm = () => 
         (type === 'albums'
             ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
             : api.data.patchPhoto({id: photo.id, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field})

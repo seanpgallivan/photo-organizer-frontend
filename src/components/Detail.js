@@ -1,16 +1,21 @@
 import React from 'react'
 
-const Detail = ({app: {api, cb, state: {photo}}, onFilterDetail, type, item}) => {
+const Detail = ({app: {api, cb, state: {photos, photo}}, onFilterDetail, type, item}) => {
 
     const handleFilter = () => 
         onFilterDetail(type, item)
 
-    const handleRemoveDetail = e => 
+    const handleRemoveDetail = () => {
+        let updatedPhotos = photos.map(ph =>
+            ph.id !== photo.id
+                ? ph
+                : {...photo, [type]: photo[type].filter(it => it !== item)})
         type === 'albums'
             ? api.data.deleteAlbumsPhoto(item.id, photo.id)
-                .then(() => cb.loadUser(null))
+                .then(() => cb.onSetState({photos: updatedPhotos}))
             : api.data.patchPhoto({id: photo.id, [type]: photo[type].filter(el => el !== item)})
-                .then(() => cb.loadUser(null))
+                .then(() => cb.onSetState({photos: updatedPhotos}))
+    }
 
 
     return (

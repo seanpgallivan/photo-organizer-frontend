@@ -4,14 +4,14 @@ import {Button} from 'semantic-ui-react'
 import Detail from './Detail'
 import PhotoDetailsForm from './PhotoDetailsForm'
 
-const PhotoDetails = ({app, app: {api, cb, state: {photo, albums}}}) => {
+const PhotoDetails = ({app, app: {api, cb, state: {photos, photo, albums}}}) => {
     const [edit, setEdit] = useState(null)
 
 
     
     // Helper Functions:
     const showDetails = type => 
-    photo[type].map((item,i) => 
+    photo?.[type].map((item,i) => 
         <Detail 
             app={app} 
             onFilterDetail={filterDetail}
@@ -46,11 +46,11 @@ const PhotoDetails = ({app, app: {api, cb, state: {photo, albums}}}) => {
     const handleFilterDetail = () =>
         filterDetail('location', photo.location)
 
-    const handleDelete = () => {
-        cb.onSetState({redirect: '/photos'})
+    const handleDelete = () => 
         api.data.deletePhoto(photo.id)
-            .then(() => cb.loadUser(null))
-    }
+            .then(() => cb.onSetState({
+                redirect: '/photos',
+                photos: photos.filter(ph => ph.id !== photo.id)}))
 
 
 
@@ -59,9 +59,9 @@ const PhotoDetails = ({app, app: {api, cb, state: {photo, albums}}}) => {
             <h2>Photo Details:</h2>
             <div className='lbl-deet'>Description:</div>
             {edit === 'description' ? (
-                <PhotoDetailsForm app={app} onSetEdit={setEdit} type='description' item={photo.description} />
+                <PhotoDetailsForm app={app} onSetEdit={setEdit} type='description' item={photo?.description} />
             ) : (
-                <div className={'details'}>{photo.description} 
+                <div className={'details'}>{photo?.description} 
                     <button 
                         className='btn-f mod'
                         name='description'
@@ -71,13 +71,13 @@ const PhotoDetails = ({app, app: {api, cb, state: {photo, albums}}}) => {
             )}
             <div className='lbl-deet'>Location:</div>
             {edit === 'location' ? (
-                <PhotoDetailsForm app={app} onSetEdit={setEdit} type='location' item={photo.location} />
+                <PhotoDetailsForm app={app} onSetEdit={setEdit} type='location' item={photo?.location} />
             ) : (
                 <div className='details'>
                     <button 
                         className='btn-f location' 
                         onClick={handleFilterDetail}
-                    >{photo.location}</button>
+                    >{photo?.location}</button>
                     <button 
                         className='btn-f mod'
                         name='location'
