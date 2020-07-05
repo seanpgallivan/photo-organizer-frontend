@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button} from 'semantic-ui-react'
 
-const PhotosInfo = ({app: {state: {photos}}, onSetEdit}) => {
+const PhotosInfo = ({app: {state: {filtered}}, onSetEdit}) => {
 
   const handleClick = () => 
     onSetEdit({photo: {}})
@@ -9,7 +9,7 @@ const PhotosInfo = ({app: {state: {photos}}, onSetEdit}) => {
   return (
     <div className="sideitem">
       <div className='side-header'>Photos Info:</div>
-      <div className='counter'>{photos.length} Photos</div>
+      <div className='counter'>{filtered.length} Photos</div>
       <Button name="new" color="teal" onClick={handleClick}>Add New Photo</Button>
     </div>
   )

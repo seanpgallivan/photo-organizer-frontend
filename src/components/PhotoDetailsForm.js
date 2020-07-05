@@ -31,13 +31,14 @@ const PhotoDetailsForm = ({app: {api, cb, state: {photos, albums, photo, filterO
     const handleConfirm = () => {
         let updatedPhoto = {...photo, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field}
         onSetEdit(null)
+        console.log(updatedPhoto)
         type === 'albums'
             ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
                 .then(() => cb.onSetState({
-                        photos: photos.map(ph =>
-                            ph.id !== photo.id
-                                ? ph
-                                : updatedPhoto)}))
+                    photos: photos.map(ph =>
+                        ph.id !== photo.id
+                            ? ph
+                            : updatedPhoto)}))
             : api.data.patchPhoto(updatedPhoto)
                 .then(() => cb.onSetState({
                     photos: photos.map(ph =>

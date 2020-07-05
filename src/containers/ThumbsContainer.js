@@ -2,10 +2,10 @@ import React from "react";
 import Thumb from '../components/Thumb'
 import { Card } from 'semantic-ui-react'
 
-const ThumbsContainer = ({app: {state: {photos}}}) => {
+const ThumbsContainer = ({app: {state: {filtered}}}) => {
 
     const displayThumbs = () => 
-        photos.map(photo => <Thumb photo={photo} key={photo.id}/>)
+        filtered.map(photo => <Thumb photo={photo} key={photo.id}/>)
 
     return (
         <div className="pane">

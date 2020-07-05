@@ -21,7 +21,7 @@ const IndexContainer = ({app}) => {
       filters.albums === '< unassigned >' ? photo.albums.length < 1 : photo.albums.map(al => al.name).includes(filters.albums))
     return photos
   }
-  app.state.photos = filterSort()
+  app.state.filtered = filterSort()
 
 
   
