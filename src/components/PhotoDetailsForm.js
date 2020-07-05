@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Button, Form, Select, Icon} from 'semantic-ui-react'
 
 
-const PhotoDetailsForm = ({app: {api, cb, state: {albums, photo, filterOptions}}, onSetEdit, type, item}) => {
+const PhotoDetailsForm = ({app: {api, cb, state: {photos, albums, photo, filterOptions}}, onSetEdit, type, item}) => {
     const [field, setField] = useState(item.name || item)
 
     const findOptions = () => {
@@ -18,15 +18,33 @@ const PhotoDetailsForm = ({app: {api, cb, state: {albums, photo, filterOptions}}
     const handleCancel = () =>
         onSetEdit(null)
 
-    const handleConfirm = () => 
-        (type === 'albums'
+    // const handleConfirm = () => 
+    //     (type === 'albums'
+    //         ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
+    //         : api.data.patchPhoto({id: photo.id, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field})
+    //     )
+    //         .then(() => {
+    //             cb.loadUser(null)
+    //             onSetEdit(null)
+    //         })
+
+    const handleConfirm = () => {
+        let updatedPhoto = {...photo, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field}
+        onSetEdit(null)
+        type === 'albums'
             ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
-            : api.data.patchPhoto({id: photo.id, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field})
-        )
-            .then(() => {
-                cb.loadUser(null)
-                onSetEdit(null)
-            })
+                .then(() => cb.onSetState({
+                        photos: photos.map(ph =>
+                            ph.id !== photo.id
+                                ? ph
+                                : updatedPhoto)}))
+            : api.data.patchPhoto(updatedPhoto)
+                .then(() => cb.onSetState({
+                    photos: photos.map(ph =>
+                        ph.id !== photo.id
+                            ? ph
+                            : updatedPhoto)}))
+    }
 
 
 
