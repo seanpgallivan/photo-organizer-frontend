@@ -25,12 +25,12 @@ const PhotoDetailsForm = ({app: {api, cb, state: {photos, albums, photo, filterO
             ph.id !== photo.id
                 ? ph
                 : updatedPhoto)
-        onSetEdit(null)
-        type === 'albums'
+        onSetEdit(null);
+        (type === 'albums'
             ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
-                .then(() => cb.buildFilterOptions(updatedPhotos))
             : api.data.patchPhoto(updatedPhoto)
-                .then(() => cb.buildFilterOptions(updatedPhotos))
+        )
+            .then(() => cb.buildFilterOptions(updatedPhotos))
     }
 
 

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Input, Button} from 'semantic-ui-react'
 
-const PhotosForm = ({app: {api, cb, state: {user}}, onSetEdit}) => {
+const PhotosForm = ({app: {api, cb, state: {user, photos}}, onSetEdit}) => {
   const [fields, setFields] = useState({
     filename: '', 
     description: '', 
@@ -19,13 +19,14 @@ const PhotosForm = ({app: {api, cb, state: {user}}, onSetEdit}) => {
   const handleSetEdit = () =>
     onSetEdit(null)
 
-  const handleClick = () =>
-    api.data.postPhoto({...fields, tags: [], people: [], albums: [], user_id: user.id})
+  const handleClick = () => {
+    let newPhoto = {...fields, tags: [], people: [], albums: [], user_id: user.id}
+    api.data.postPhoto(newPhoto)
       .then(data => {
-        cb.filterChange({albums: fields.name})
-        cb.loadUser(`/photo/${data.id}`)
+        cb.buildFilterOptions(photos.concat(data), null, `/photo/${data.id}`)
         onSetEdit(null)
       }).catch(console.log)
+    }
 
 
   return (

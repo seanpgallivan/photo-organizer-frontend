@@ -48,9 +48,7 @@ const PhotoDetails = ({app, app: {api, cb, state: {photos, photo, albums}}}) => 
 
     const handleDelete = () => 
         api.data.deletePhoto(photo.id)
-            .then(() => cb.onSetState({
-                redirect: '/photos',
-                photos: photos.filter(ph => ph.id !== photo.id)}))
+            .then(() => cb.buildFilterOptions(photos.filter(ph => ph.id !== photo.id), null, '/photos'))
 
 
 

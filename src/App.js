@@ -70,8 +70,9 @@ class App extends Component {
     localStorage.setItem('username', data.username)
   }
 
-  buildFilterOptions = (photos, albums=this.state.albums) => {
+  buildFilterOptions = (photos, albums, redirect) => {
     photos = photos || this.state.photos
+    albums = albums || this.state.albums
     let {filters} = this.state,
         newFilters = {},
         albumsOpts,
@@ -110,7 +111,8 @@ class App extends Component {
       filters: {
         ...filters,
         ...newFilters
-      }
+      },
+      redirect: redirect
     })
   }
 
