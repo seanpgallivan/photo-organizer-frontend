@@ -70,7 +70,8 @@ class App extends Component {
     localStorage.setItem('username', data.username)
   }
 
-  buildFilterOptions = (photos=this.state.photos, albums=this.state.albums) => {
+  buildFilterOptions = (photos, albums=this.state.albums) => {
+    photos = photos || this.state.photos
     let {filters} = this.state,
         newFilters = {},
         albumsOpts,

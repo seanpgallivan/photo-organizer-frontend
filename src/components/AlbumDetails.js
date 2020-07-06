@@ -1,7 +1,7 @@
 import React from 'react'
 import {Button} from 'semantic-ui-react'
 
-const AlbumDetails = ({app: {api, cb, state: {album}}, onSetEdit}) => {
+const AlbumDetails = ({app: {api, cb, state: {albums, album}}, onSetEdit}) => {
 
   const handleSetEdit = e => 
     onSetEdit({album: (e.target.name==='new' ? {} : album)})
@@ -10,7 +10,7 @@ const AlbumDetails = ({app: {api, cb, state: {album}}, onSetEdit}) => {
     api.data.deleteAlbum(album.id)
       .then(() => {
         cb.filterChange({albums: null})
-        cb.loadUser()})
+        cb.buildFilterOptions(null, albums.filter(al => al.id !== album.id))})
       .catch(console.log)
 
 
