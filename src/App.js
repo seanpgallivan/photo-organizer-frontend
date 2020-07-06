@@ -57,11 +57,6 @@ class App extends Component {
       .catch(err => this.setState({error: err.message}))
 
   buildState = (data, redirect) => {
-    let unassigned = [{key: '< unassigned >', value: '< unassigned >', text: '< unassigned >'}],
-        albumsOptions = unassigned.concat(data.albums.map(opt => ({key: opt.name, value: opt.name, text: opt.name})).sort((a,b)=>a.key.toLowerCase()>b.key.toLowerCase()?1:-1)),
-        tagsOptions = unassigned.concat(data.tags.map(opt => ({key: opt, value: opt, text: opt}))),
-        peopleOptions = unassigned.concat(data.people.map(opt => ({key: opt, value: opt, text: opt}))),
-        locationsOptions = data.locations.map(opt => ({key: opt, value: opt, text: opt}))
     this.setState({
       user: {
         id: data.id,
@@ -69,19 +64,54 @@ class App extends Component {
         fullname: data.fullname,
         bio: data.bio
       },
-      redirect: redirect,
-      photos: data.photos.sort((a,b)=>a.id>b.id?1:-1),
-      albums: data.albums,
-      filterOptions: {
-        albums: albumsOptions,
-        tags: tagsOptions,
-        people: peopleOptions,
-        locations: locationsOptions
-      }
+      redirect: redirect
     })
+    this.buildFilterOptions(data.photos, data.albums)
     localStorage.setItem('username', data.username)
   }
 
+  buildFilterOptions = (photos=this.state.photos, albums=this.state.albums) => {
+    let {filters} = this.state,
+        newFilters = {},
+        albumsOpts,
+        tagsOpts = new Set(['< unassigned >']),
+        peopleOpts = new Set(['< unassigned >']),
+        locationsOpts = new Set()
+    photos.forEach(el => {
+      el.tags.forEach(opt => tagsOpts.add(opt))
+      el.people.forEach(opt => peopleOpts.add(opt))
+      locationsOpts.add(el.location)
+    })
+    if (!tagsOpts.has(filters.tags)) newFilters.tags = null
+    if (!peopleOpts.has(filters.people)) newFilters.people = null
+    if (!tagsOpts.has(filters.tags)) newFilters.tags = null
+    tagsOpts = [...tagsOpts]
+      .sort((a,b) => a.toLowerCase()>b.toLowerCase()?1:-1)
+      .map(opt => ({key: opt, value: opt, text: opt}))
+    peopleOpts = [...peopleOpts]
+      .sort((a,b) => a.toLowerCase()>b.toLowerCase()?1:-1)
+      .map(opt => ({key: opt, value: opt, text: opt}))
+    locationsOpts = [...locationsOpts]
+      .sort((a,b) => a.toLowerCase()>b.toLowerCase()?1:-1)
+      .map(opt => ({key: opt, value: opt, text: opt}))
+    albumsOpts = [...albums, {name: '< unassigned >'}]
+      .sort((a,b) => a.name.toLowerCase()>b.name.toLowerCase()?1:-1)
+      .map(opt => ({key: opt.name, value: opt.name, text: opt.name}))
+    this.setState({
+      photos: photos.sort((a,b)=>a.id>b.id?1:-1),
+      albums: albums.sort((a,b)=>a.id>b.id?1:-1),
+      filterOptions: {
+        albums: albumsOpts,
+        tags: tagsOpts,
+        people: peopleOpts,
+        locations: locationsOpts
+      },
+      filters: {
+        ...filters,
+        ...newFilters
+      }
+    })
+  }
 
   
   // Helper Functions:
@@ -108,6 +138,7 @@ class App extends Component {
         logout: this.logout,
         loadUser: this.loadUser,
         buildState: this.buildState,
+        buildFilterOptions: this.buildFilterOptions,
         filterChange: this.filterChange,
         onSetState: this.onSetState},
       state: {...this.state}

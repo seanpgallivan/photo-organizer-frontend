@@ -18,33 +18,19 @@ const PhotoDetailsForm = ({app: {api, cb, state: {photos, albums, photo, filterO
     const handleCancel = () =>
         onSetEdit(null)
 
-    // const handleConfirm = () => 
-    //     (type === 'albums'
-    //         ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
-    //         : api.data.patchPhoto({id: photo.id, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field})
-    //     )
-    //         .then(() => {
-    //             cb.loadUser(null)
-    //             onSetEdit(null)
-    //         })
-
     const handleConfirm = () => {
-        let updatedPhoto = {...photo, [type]: Array.isArray(photo[type]) ? [...photo[type], field] : field}
+        let value = type==='albums' ? albums.find(al => al.name === field) : field
+        let updatedPhoto = {...photo, [type]: Array.isArray(photo[type]) ? [...photo[type], value] : value}
+        let updatedPhotos = photos.map(ph =>
+            ph.id !== photo.id
+                ? ph
+                : updatedPhoto)
         onSetEdit(null)
-        console.log(updatedPhoto)
         type === 'albums'
             ? api.data.postAlbumsPhoto(albums.find(alb => alb.name === field).id, photo.id)
-                .then(() => cb.onSetState({
-                    photos: photos.map(ph =>
-                        ph.id !== photo.id
-                            ? ph
-                            : updatedPhoto)}))
+                .then(() => cb.buildFilterOptions(updatedPhotos))
             : api.data.patchPhoto(updatedPhoto)
-                .then(() => cb.onSetState({
-                    photos: photos.map(ph =>
-                        ph.id !== photo.id
-                            ? ph
-                            : updatedPhoto)}))
+                .then(() => cb.buildFilterOptions(updatedPhotos))
     }
 
 
